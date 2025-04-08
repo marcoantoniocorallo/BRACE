@@ -1,3 +1,4 @@
+import argparse
 from itertools import product
 import torch
 from torch import nn
@@ -277,20 +278,26 @@ def model_selection(config):
     return best_trial
 
 def main():
-    config = {
-        "hidden": tune.choice([256, 512]),
-        "lr": tune.loguniform(1e-5, 1e-2),
-        "batch_size": tune.choice([50, 64]),
-        "epochs" : tune.choice([20])
-    }
+    parser = argparse.ArgumentParser(description='--training (-t) for model selection',)
+    parser.add_argument('-t', '--training', action='store_true')
+    training = vars(parser.parse_args())['training']
 
-    best_trial = model_selection(config)
+    if training:
+        config = {
+            "hidden": tune.choice([256, 512]),
+            "lr": tune.loguniform(1e-5, 1e-2),
+            "batch_size": tune.choice([50, 64]),
+            "epochs" : tune.choice([20])
+        }
 
-    retrain(best_trial.config)
-    model = MLPNet(hidden = best_trial.config["hidden"])
+        best_trial = model_selection(config)
+
+        retrain(best_trial.config) # retrain and save model params
+        model = MLPNet(hidden = best_trial.config["hidden"])
+    else:
+        model = MLPNet(hidden = 512)
+
     model = load_model(model)
-
-    print(model.state_dict())
         
     test_acc = test_model(model, dir_path=DATASET_PATH)
     print("Test set accuracy: {}".format(test_acc))
