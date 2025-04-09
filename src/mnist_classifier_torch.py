@@ -1,39 +1,42 @@
+'''
+    Definition of a simple, centralized, MNIST classifier.
+    The model is quite simple: a 1-hidden-layer-MLP with 512 units;
+    The optimizer is Adam, learning rate 0.00013292918943162168 and batch-size of 50.
+    The model selection has been done by using a 80%-20% Hold-out validation.
+    The test accuracy of the final model is about 0.9779 with 20 epochs and 0.9803 with 30 epochs..
+
+    It is important to notice that the aim of this model selection 
+    is not to find the best model for the MNIST problem,
+    but to find a simple but still good model to use in a federated learning experimental analysis.
+'''
+
 import argparse
-from itertools import product
+from utils import DATASET_PATH, MODEL_PATH, MODEL_FILE, set_random_state, get_generator, data_load
 import torch
-from torch import nn
 from torch.utils.data import DataLoader, random_split
-from torchvision import datasets
-from torchvision.transforms import ToTensor, Compose, Normalize, Lambda
 from ray import tune
 from ray import train
-from ray.train import Checkpoint, get_checkpoint
 from ray.tune.schedulers import ASHAScheduler
-import ray.cloudpickle as pickle
 
-DATASET_PATH = "./datasets/"
-MODEL_PATH = "./models/"
-MODEL_FILE = "model.pth"
-SEED = 42
+# reproducibility
+set_random_state()
+GENERATOR = get_generator()
 
 class MLPNet(torch.nn.Module):
-    def __init__(self, input_size = 28, hidden = 512, output_size = 10, seed = 42):
+    def __init__(self, input_size = 28, hidden = 512, output_size = 10, generator = GENERATOR):
         super().__init__()
-        
-        # set seed
-        gen = torch.Generator().manual_seed(seed)
 
-        # define nn architecture
+        # nn architecture
         self.input_size = input_size
         self.l1 = torch.nn.Linear(input_size * input_size, hidden)
         self.l2 = torch.nn.Linear(hidden, output_size)
 
         # initialize weights
-        torch.nn.init.kaiming_uniform_(self.l1.weight, generator = gen)
-        torch.nn.init.kaiming_uniform_(self.l2.weight, generator = gen)
+        torch.nn.init.kaiming_uniform_(self.l1.weight, generator = generator)
+        torch.nn.init.kaiming_uniform_(self.l2.weight, generator = generator)
 
     def forward(self, x: torch.Tensor):
-        flatten = nn.Flatten()
+        flatten = torch.nn.Flatten()
         x = flatten(x) # convert each 28x28 image into an array of 784 pixel values
         x = torch.relu(self.l1(x))
         x = torch.softmax(self.l2(x), 1)
@@ -44,13 +47,14 @@ def train_model(config):
 
     model = MLPNet(hidden = config["hidden"])
     optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
-    loss_fn = nn.CrossEntropyLoss() # suitable for multiclass classification tasks like MNIST
+    loss_fn = torch.nn.CrossEntropyLoss() # suitable for multiclass classification tasks like MNIST
 
     trainset, _ = data_load(dir_path)
 
     test_abs = int(len(trainset) * 0.8)
+    
     train_subset, val_subset = random_split(
-        trainset, [test_abs, len(trainset) - test_abs]
+        trainset, [test_abs, len(trainset) - test_abs], GENERATOR
     )
 
     # DataLoader wraps an iterable around the Dataset
@@ -68,7 +72,6 @@ def train_model(config):
         print(f"Epoch {epoch + 1}\n-------------------------------")
         running_loss = 0.0
         epoch_steps = 0
-
 
         for i, data in enumerate(train_dataloader, 0):
             # get the inputs; data is a list of [inputs, labels]
@@ -162,7 +165,7 @@ def retrain(config):
     model = MLPNet(hidden = config["hidden"])
     optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
 
-    loss_fn = nn.CrossEntropyLoss()
+    loss_fn = torch.nn.CrossEntropyLoss()
 
     trainset, _ = data_load(dir_path) # full trset
 
@@ -228,30 +231,6 @@ def predict(model, data, classes):
             predicted, actual = classes[pred[0].argmax(0)], classes[y]
             print(f'Predicted: "{predicted}", Actual: "{actual}"')
 
-def data_load(dataset_path):
-    # Download training data from open datasets
-    # Dataset stores the samples and their corresponding labels
-    transform = Compose([ToTensor(), Normalize((0.5,), (0.5,))])
-    target_transform = Lambda(lambda y: torch.zeros(
-        10, dtype=torch.float).scatter_(dim=0, index=torch.tensor(y), value=1)
-    )
-    training_data = datasets.MNIST(
-        root=dataset_path,
-        train=True,
-        download=True,
-        transform=transform,
-        target_transform=target_transform
-    )
-
-    test_data = datasets.MNIST(
-        root=dataset_path,
-        train=False,
-        download=True,
-        transform=transform,
-    )
-
-    return training_data, test_data
-
 def model_selection(config):
     scheduler = ASHAScheduler(
         metric="val_loss",
@@ -265,7 +244,7 @@ def model_selection(config):
         train_model,
         resources_per_trial={"cpu": 2},
         config=config,
-        num_samples= 8,
+        num_samples= 1,
         scheduler=scheduler,
         
     )
@@ -284,19 +263,16 @@ def main():
 
     if training:
         config = {
-            "hidden": tune.choice([256, 512]),
-            "lr": tune.loguniform(1e-5, 1e-2),
-            "batch_size": tune.choice([50, 64]),
+            "hidden": tune.choice([512]),
+            "lr": 0.00013292918943162168, #tune.loguniform(1e-5, 1e-2),
+            "batch_size": tune.choice([50]),
             "epochs" : tune.choice([20])
         }
-
         best_trial = model_selection(config)
 
         retrain(best_trial.config) # retrain and save model params
-        model = MLPNet(hidden = best_trial.config["hidden"])
-    else:
-        model = MLPNet(hidden = 512)
-
+    
+    model = MLPNet()
     model = load_model(model)
         
     test_acc = test_model(model, dir_path=DATASET_PATH)
