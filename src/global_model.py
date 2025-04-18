@@ -28,6 +28,5 @@ class MLPNet(torch.nn.Module):
 HP = {
     "lr" : 0.00013292918943162168,
     "batch_size" : 50,
-    "epochs" : 1, # TODO rimettere a 20
-    "optimizer" : torch.optim.Adam(MLPNet().parameters(), lr = 0.00013292918943162168)
+    "epochs" : 20,
 }

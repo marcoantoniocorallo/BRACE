@@ -1,6 +1,5 @@
 from utils import set_random_state, get_generator, ds_generator, average_state_dicts
-import ray
-import numpy as np
+import os
 import torch
 import copy
 from torch.utils.data import DataLoader
@@ -12,6 +11,8 @@ set_random_state()
 GENERATOR = get_generator()
 
 # Start Ray
+os.environ["RAY_DEDUP_LOGS"]="0"
+import ray # imported after RAY_DEDUP_LOGS
 ray.init(ignore_reinit_error=True)
 
 @ray.remote
@@ -52,7 +53,7 @@ class Client:
 
     def local_train(self):
         loss_fn = torch.nn.CrossEntropyLoss()
-        optimizer = self.hp["optimizer"]
+        optimizer = torch.optim.Adam(self.model.parameters(), self.hp["lr"])
 
         # DataLoader wraps an iterable around the Dataset
         train_dataloader = DataLoader(
@@ -61,7 +62,7 @@ class Client:
 
         self.model.train()
         for epoch in range(self.hp["epochs"]):
-            print(f"Client {self.client_id}, Epoch {epoch + 1}\n-------------------------------")
+            print("Client %d - start epoch %d" % (self.client_id, epoch))
             running_loss = 0.0
             epoch_steps = 0
 
@@ -83,10 +84,9 @@ class Client:
                 epoch_steps += 1
 
                 if i % 100 == 0:  # print every 100 mini-batches
-                    print("Client ", self.client_id)
                     print(
-                        "[%d, %5d] loss: %.3f"
-                        % (epoch + 1, i + 1, running_loss / (epoch_steps+1))
+                        "Client %d, epoch [%d, %5d] loss: %.3f"
+                        % (self.client_id, epoch, i, running_loss / (epoch_steps+1))
                     )
                     running_loss = 0.0
 
@@ -109,14 +109,10 @@ def federated_training(model, hp, num_rounds=1, num_clients=2):
 
         # Clients perform local training
         client_model_refs = [client.local_train.remote() for client in clients]
-
-        # forse bisogna aspettare la fine del training => ray.wait ?
         client_models = ray.get(client_model_refs)
 
         # Server aggregates the client updates
-        aggregated_weights = ray.get(server.aggregate_and_update.remote(client_models))
-
-        print(f"Aggregated model weights: {aggregated_weights}")
+        ray.get(server.aggregate_and_update.remote(client_models))
 
     final_model = ray.get(server.get_model.remote())
     print("\n✅ Final global model weights:", final_model)
