@@ -1,4 +1,6 @@
-from utils import set_random_state, get_generator, ds_generator, average_state_dicts
+import argparse
+from utils import set_random_state, get_generator, ds_generator, average_state_dicts, \
+                data_load, DATASET_PATH
 import os
 import torch
 import copy
@@ -18,23 +20,49 @@ ray.init(ignore_reinit_error=True)
 @ray.remote
 class Server:
     def __init__(self, model, hp,):
-        self.global_model = model
+        self.model = model
         self.hp = hp
 
     def get_model(self):
-        return self.global_model
+        return self.model
     
     def get_hp(self):
         return self.hp
 
     def send_model(self):
-        return copy.deepcopy(self.global_model)
+        return copy.deepcopy(self.model)
 
     def aggregate_and_update(self, client_weights):
         avg = average_state_dicts(client_weights)
-        self.global_model.load_state_dict(avg)
+        self.model.load_state_dict(avg)
 
-        return self.global_model.state_dict()
+        return self.model.state_dict()
+    
+    def test_model(self):
+        _, testset = data_load(DATASET_PATH)
+
+        testloader = torch.utils.data.DataLoader(
+            testset, batch_size=4, shuffle=False, num_workers=2
+        )
+
+        correct = 0
+        total = 0
+
+        # Set the model to evaluation mode - important for batch normalization and dropout layers
+        # Unnecessary in this situation but added for best practices
+        self.model.eval()
+
+        # Evaluating the model with torch.no_grad() ensures that no gradients are computed during test mode
+        # also serves to reduce unnecessary gradient computations and memory usage for tensors with requires_grad=True
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                outputs = self.model(images)
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+
+        return correct / total
 
 @ray.remote
 class Client:
@@ -92,11 +120,11 @@ class Client:
 
         return self.send_weights()
 
-def federated_training(model, hp, num_rounds=1, num_clients=2):
-    ds_gen = ds_generator(num_clients)
+def federated_training(model, hp, num_rounds=1, n_clients=5):
+    ds_gen = ds_generator(n_clients)
 
     server = Server.remote(model, hp)
-    clients = [Client.remote(i, ds_gen.get_trset()) for i in range(num_clients)]
+    clients = [Client.remote(i, ds_gen.get_trset()) for i in range(n_clients)]
 
     for round_num in range(num_rounds):
         print(f"\n--- Round {round_num + 1} ---")
@@ -115,11 +143,17 @@ def federated_training(model, hp, num_rounds=1, num_clients=2):
         ray.get(server.aggregate_and_update.remote(client_models))
 
     final_model = ray.get(server.get_model.remote())
-    print("\n✅ Final global model weights:", final_model)
+    accuracy = ray.get(server.test_model.remote())
+    print("\nFinal global model accuracy:", accuracy)
 
 # Run the simulation
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='--n_clients (-n) for specifying the number of clients (default: 5)',)
+    parser.add_argument('-n', '--n_clients', type=int, default=5)
+    n_clients = vars(parser.parse_args())['n_clients']
+    print(n_clients)
+
     model = MLPNet()
     hp = HP
-    federated_training(model = model, hp = HP)
+    federated_training(model = model, hp = HP, n_clients=n_clients)
     ray.shutdown()

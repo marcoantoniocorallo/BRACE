@@ -47,6 +47,7 @@ class ds_generator():
     def __init__(self, num_clients):
         self.num_clients = num_clients
         self.split_trset(num_clients)
+        self._generator = self._make_generator()
 
     def split_trset(self, num_clients):
         assert(num_clients > 0)
@@ -62,14 +63,15 @@ class ds_generator():
 
         self.dsets = dsets
 
-    def generate(self):
+    def _make_generator(self):
         #yield from self.dsets
         for ds in self.dsets:
             yield ds
 
     def get_trset(self):
-        return next(self.generate())
-    
+        return next(self._generator)
+
+
 def average_state_dicts(dicts):
     # Ensure the list is not empty
     if not dicts:

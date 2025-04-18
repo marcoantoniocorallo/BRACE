@@ -1,0 +1,72 @@
+# Idea:
+L'idea del progetto è di implementare un semplice sistema di federated learning, composto da:
+- un aggregator server;
+- una decina di client.
+
+Come usuale, il server manda l'architettura e i pesi iniziali della NN ai client che,
+allenando il modello locale su una partizione del dataset, invieranno indietro al server il modello aggiornato.
+
+L'idea per prevenire poisoning attacks e nodi bizantini, è quella di implementare un semplice algoritmo di consensus.
+Il client, prima di mandare il modello aggiornato al server, lo manda ad altri K client. 
+Questi dovranno votare il modello candidato, sulla base di metriche di similarità.
+Se la maggioranza dei voti sarà positiva, il modello verrà mandato al server.
+
+L'obiettivo finale del progetto è quello di effettuare esperimenti sulle metriche da utilizzare (similarità: euclidean distance [40], [52], cosine similarity [37], [38],
+k-means [46], Pearson correlation coefficient [49], [51], etc.),
+nonchè sul numero di client a cui mandare il modello (quanti client "validano" il modello locale di una macchina? Tutti? Solo quelli del sottoinsieme corrente? Uno solo del sottoinsieme corrente?), sulle varianti del protocollo di consensus e,
+infine, su estensioni del sistema che utilizzino non solo metriche di similarità, 
+ma anche metriche di performance, BRA (Krum aggregation,... ) e verification-based methods (vedi SVM e altri).
+
+Nota: come evitare che il client modifichi il modello prima di mandarlo? magari il modello può essere cacheato dagli altri client e mandato da uno degli altri client in modo random, oppure può firmare con l'hash il risultato prima di inviarlo.
+
+## Datasets:
+l'idea iniziale era di utilizzare un dataset su malware android, che ben si sposa col progetto dato che:
+- federated learning si può avere su un sistema distribuito nell'edge, quindi composto (o componibile) da smartphones;
+- un attaccante potrebbe essere interessato a scalfire l'accuracy del modello per far passare un malware (magari in suo possesso) come goodware.
+Inoltre, è sufficientemente grande da poterlo dividere tra i vari client.
+
+Link dataset: https://archive.ics.uci.edu/dataset/855/tuandromd+(tezpur+university+android+malware+dataset)
+Paper: https://www.semanticscholar.org/paper/97e4780810c69604f6e2f2f4e31b88bbef7ca669
+
+Tuttavia, il dataset in questione è incompleto e sbilanciato nelle classi, per cui non è semplice allenare un modello in modo unbiased e ottenere delle buone prestazioni di partenza.
+Per questo motivo, ho pensato di aggiungere un livello di astrazione, allenando un modello semplice sul dataset MNIST.
+Modello e dataset sono in questo caso attori intercambiabili. Una volta che l'algoritmo è corretto, si può trovare un dataset più interessante e allenarvi sopra un modello più complesso.
+
+## Result #0:
+Ho preparato un sistema di ML classico sul dataset MNIST, con un modello MLP con 1 hidden layer di 512 neuroni.
+Ho definito funzioni e procedure per allenare il modello sul dataset, effettuare una leggera model selection (ho ridotto al minimo il numero di parametri inseriti nella grid search: un paio di valori per le epoche,
+per la batch-size, per il numero di neuroni nell'hidden layer e il learning rate), ri-allenare il modello scelto sull'intero training set e infine effettuare una valutazione del modello allenato.
+Seguendo questo approccio, la model evaluation sul test set restituisce un'accuracy dello 0.9797 che, considerata l'architettura semplice del modello, i pochi parametri su cui sono state valutate le performances,
+il basso numero di epoche e il mancato utilizzo di tecniche più avanzate (drop-out, RNN, weight-decay, ...) o altri tipi di ottimizzatori, è un ottimo risultato iniziale.
+Il sistema in questione è stato scritto utilizzando PyTorch e Ray Tune.
+
+## Result #1:
+Ho replicato un semplice sistema di Federated Learning su cui effettuare esperimenti.
+Come primo asset di sperimentazione, ho istanziato diversi numeri di client su un sistema di apprendimento a round singolo.
+Un test sull'affidabilità e la replicabilità dei dati è stato effettuato su un sistema con un solo client, riportando l'accuracy attesa.
+I risultati sono qui riportati:
+N. Round | N. Clients | Accuracy finale
+    1           1           0.9771
+    1           2           0.9672
+    1           3           0.9588
+    1           4           0.9511
+    1           5           0.9474
+    1           6           0.9425
+    1           7           0.9396
+    1           8           0.9377
+    1           9           0.9327
+    1           10          0.9291
+
+Le prestazioni del modello diminuiscono lentamente con la dimensione dei training set locali, pur mantenendo una buona accuracy.
+Vista la dimensione del dataset scelto e la crescente diminuizione dell'accuracy del modello, credo sia ragionevole circoscrivere gli esperimenti su un set di nodi da 2 a 10. Altri esperimenti possono essere effettuati se ritenuto interessante su altre macchine e/o cluster di macchine.
+
+Fase 1
+- Step 1. Scegliere dataset
+- Step 2. Replicare architettura e risultati attesi 
+
+Fase 2
+- Step 1. Implementare lo stesso modello su un sistema distribuito (FL) in Ray (actors e task?) e vedere i risultati
+- Step 2. Introdurre protocollo di consensus
+- Step 3. Introdurre nodi bizantini (modificando i dataset di quei nodi) e verificare le conseguenze
+- Step 4. Effettuare test con metriche e scelte diverse 
+- Step 5. Introdurre BRA e altre tecniche di mitigazione per verificare la composizione di più meccanismi
