@@ -1,112 +1,149 @@
-import os
-import random
-import ray.train
+'''
+    Definition of a simple, centralized, MNIST classifier.
+    The model is quite simple: a 1-hidden-layer-MLP with 512 units;
+    The optimizer is Adam, learning rate 0.00013292918943162168 and batch-size of 50.
+    The model selection has been done by using a 80%-20% Hold-out validation.
+    The test accuracy of the final model is about 0.9779 with 20 epochs and 0.9803 with 30 epochs..
+
+    It is important to notice that the aim of this model selection 
+    is not to find the best model for the MNIST problem,
+    but to find a simple but still good model to use in a federated learning experimental analysis.
+'''
+
+import argparse
+from utils import DATASET_PATH, MODEL_PATH, MODEL_FILE, set_random_state, get_generator, data_load
 import torch
-import torchmetrics
-from torch.nn import CrossEntropyLoss
-from torch.optim import Adam
-from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision.transforms import ToTensor, Normalize, Compose
+from torch.utils.data import DataLoader, random_split
+from ray import tune
+from ray import train
+from ray.tune.schedulers import ASHAScheduler
 
-import ray
-from ray.train import ScalingConfig, RunConfig
-from ray.train.torch import TorchTrainer
-
-class ConvNet(torch.nn.Module):
-    def __init__(self):
-        super(ConvNet, self).__init__()
-        self.conv1 = torch.nn.Conv2d(1, 3, kernel_size=3)
-        self.fc = torch.nn.Linear(192, 10)
-
-    def forward(self, x):
-        x = torch.relu(torch.max_pool2d(self.conv1(x), 3))
-        x = x.view(-1, 192)
-        x = self.fc(x)
-        return torch.log_softmax(x, dim=1)
+# reproducibility
+set_random_state()
+GENERATOR = get_generator()
 
 class MLPNet(torch.nn.Module):
-    def __init__(self, input_size = 28, hidden = 512, output_size = 10, seed = None):
+    def __init__(self, input_size = 28, hidden = 512, output_size = 10, generator = GENERATOR):
         super().__init__()
-        
-        gen = torch.Generator()
-        if seed is not None:
-            gen = gen.manual_seed(seed)
 
+        # nn architecture
         self.input_size = input_size
         self.l1 = torch.nn.Linear(input_size * input_size, hidden)
         self.l2 = torch.nn.Linear(hidden, output_size)
 
-        torch.nn.init.kaiming_uniform_(self.l1.weight, generator = gen)
-        torch.nn.init.kaiming_uniform_(self.l2.weight, generator = gen)
+        # initialize weights
+        torch.nn.init.kaiming_uniform_(self.l1.weight, generator = generator)
+        torch.nn.init.kaiming_uniform_(self.l2.weight, generator = generator)
 
     def forward(self, x: torch.Tensor):
-        x = x.view(-1, self.input_size * self.input_size)
+        flatten = torch.nn.Flatten()
+        x = flatten(x) # convert each 28x28 image into an array of 784 pixel values
         x = torch.relu(self.l1(x))
         x = torch.softmax(self.l2(x), 1)
         return x
 
-def print_metrics(loss: torch.Tensor, accuracy: torch.Tensor, epoch: int) -> None:
-    metrics = {"loss": loss.item(), "accuracy": accuracy.item(), "epoch": epoch}
-    if ray.train.get_context().get_world_rank() == 0:
-        print(metrics)
-    return metrics
+def train_model(config):
+    dir_path = DATASET_PATH
 
-def save_checkpoint_and_metrics(model: torch.nn.Module, metrics: dict[str, float]) -> None:
-    checkpoint = None
-    if ray.train.get_context().get_world_rank() == 0:
-        torch.save(
-            model.module.state_dict(),
-            os.path.join(os.path.abspath("/home/marco/Documenti/University/SDC/project/SDC-project/models"), "model.pt")
-        )
-        checkpoint = ray.train.Checkpoint.from_directory(os.path.abspath("/home/local/ADUNIPI/y.andriaccio/gitDatabase/marco-scalable/models"))
+    model = MLPNet(hidden = config["hidden"])
+    optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
+    loss_fn = torch.nn.CrossEntropyLoss() # suitable for multiclass classification tasks like MNIST
 
-    ray.train.report(
-        metrics,
-        checkpoint=checkpoint,
+    trainset, _ = data_load(dir_path)
+
+    test_abs = int(len(trainset) * 0.8)
+    
+    train_subset, val_subset = random_split(
+        trainset, [test_abs, len(trainset) - test_abs], GENERATOR
     )
 
-def run_training(config: dict):
-    criterion = CrossEntropyLoss()
-    torch.manual_seed(config['seed'])
-    random.seed(config['seed'])
-    model = load_model(config['seed'])
-    optimizer = Adam(model.parameters(), lr=1e-5)
-    
-    global_batch_size = config["global_batch_size"]
-    batch_size = global_batch_size // ray.train.get_context().get_world_size()
-    data_loader = build_data_loader_train(batch_size= batch_size)
-    
-    acc = torchmetrics.Accuracy(task="multiclass", num_classes=10).to(model.device)
+    # DataLoader wraps an iterable around the Dataset
+    train_dataloader = DataLoader(
+        train_subset, batch_size=config["batch_size"], shuffle=True, num_workers=4,
+    )
+    val_dataloader = DataLoader(
+        val_subset, batch_size=config["batch_size"], shuffle=True, num_workers=4,
+    )
 
-    for epoch in range(config["num_epochs"]):
-        data_loader.sampler.set_epoch(epoch)
+    for epoch in range(config["epochs"]):
+        # Set the model to training mode - important for batch normalization and dropout layers
+        # Unnecessary in this situation but added for best practices
+        model.train()
+        print(f"Epoch {epoch + 1}\n-------------------------------")
+        running_loss = 0.0
+        epoch_steps = 0
 
-        for images, labels in data_loader:
-            outputs = model(images)
-            loss = criterion(outputs, labels)
+        for i, data in enumerate(train_dataloader, 0):
+            # get the inputs; data is a list of [inputs, labels]
+            inputs, labels = data
+
+            # zero the parameter gradients
             optimizer.zero_grad()
+
+            # forward + backward + optimize
+            outputs = model(inputs)
+            loss = loss_fn(outputs, labels)
             loss.backward()
             optimizer.step()
-            acc(outputs, labels)
 
-        accuracy = acc.compute()
+            # print statistics
+            running_loss += loss.item()
+            epoch_steps += 1
 
-        metrics = print_metrics(loss, accuracy, epoch)
-        acc.reset()
+            if i % 100 == 0:  # print every 100 mini-batches
+                print(
+                    "[%d, %5d] loss: %.3f"
+                    % (epoch + 1, i + 1, running_loss / (epoch_steps+1))
+                )
+                running_loss = 0.0
 
-    save_checkpoint_and_metrics(model, metrics)
+        # Validation loss
+        val_loss = 0.0
+        val_steps = 0
+        total = 0
+        correct = 0
 
-def run_test(model: torch.nn.Module):
-    correct, total = 0, 0
+        model.eval()
+        with torch.no_grad():
+            for i, data in enumerate(val_dataloader, 0):
+                inputs, labels = data
 
-    # global_batch_size = config["global_batch_size"]
-    # batch_size = global_batch_size // ray.train.get_context().get_world_size()
-    data_loader = build_data_loader_test()
+                outputs = model(inputs)
+                _, predicted_label = torch.max(outputs.data, 1)
+                _, true_label = torch.max(labels.data, 1)
+                total += labels.size(0)
 
+                correct += (predicted_label == true_label).sum().item()
+
+                loss = loss_fn(outputs, labels)
+                val_loss += loss.cpu().numpy()
+                val_steps += 1
+
+        train.report(
+            {"val_loss": val_loss / val_steps, "accuracy": correct / total}
+        )
+
+    print("Finished Training")
+
+def test_model(model, dir_path):
+    _, testset = data_load(dir_path)
+
+    testloader = torch.utils.data.DataLoader(
+        testset, batch_size=4, shuffle=False, num_workers=2
+    )
+
+    correct = 0
+    total = 0
+
+    # Set the model to evaluation mode - important for batch normalization and dropout layers
+    # Unnecessary in this situation but added for best practices
     model.eval()
+
+    # Evaluating the model with torch.no_grad() ensures that no gradients are computed during test mode
+    # also serves to reduce unnecessary gradient computations and memory usage for tensors with requires_grad=True
     with torch.no_grad():
-        for images, labels in data_loader:
+        for data in testloader:
+            images, labels = data
             outputs = model(images)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
@@ -114,61 +151,132 @@ def run_test(model: torch.nn.Module):
 
     return correct / total
 
-def load_model(seed: int) -> torch.nn.Module:
-    # model = ConvNet()
-    model = MLPNet(seed= seed)
-    model = ray.train.torch.prepare_model(model)
+def save_model(model):
+    torch.save(model.state_dict(), MODEL_PATH + MODEL_FILE)
+    print("Saved PyTorch Model State to " + MODEL_PATH + MODEL_FILE)
+
+def load_model(model):
+    model.load_state_dict(torch.load(MODEL_PATH + MODEL_FILE, weights_only=True))
     return model
 
-def build_data_loader_train(batch_size: int) -> DataLoader:
-    transform = Compose([ToTensor(), Normalize((0.5,), (0.5,))])
-    data = MNIST(root="./data", train=True, download=True, transform=transform)
-    loader = DataLoader(data, batch_size=batch_size, shuffle=True, drop_last=True)
+# retrain on the entire training set!
+def retrain(config):
+    dir_path = DATASET_PATH
+    model = MLPNet(hidden = config["hidden"])
+    optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
 
-    loader = ray.train.torch.prepare_data_loader(loader)
-    return loader
+    loss_fn = torch.nn.CrossEntropyLoss()
 
-def build_data_loader_test() -> DataLoader:
-    transform = Compose([ToTensor(), Normalize((0.5,), (0.5,))])
-    data = MNIST(root="./data", train=False, download=True, transform=transform)
-    loader = DataLoader(data, shuffle=True, drop_last=True)
+    trainset, _ = data_load(dir_path) # full trset
 
-    # loader = ray.train.torch.prepare_data_loader(loader)
-    return loader
+    # DataLoader wraps an iterable around the Dataset
+    train_dataloader = DataLoader(
+        trainset, batch_size=config["batch_size"], shuffle=True, num_workers=4,
+    )
+
+    model.train()
+    for epoch in range(config["epochs"]):
+        # Set the model to training mode - important for batch normalization and dropout layers
+        # Unnecessary in this situation but added for best practices
+        print(f"Epoch {epoch + 1}\n-------------------------------")
+        running_loss = 0.0
+        epoch_steps = 0
+
+        for i, data in enumerate(train_dataloader, 0):
+            # get the inputs; data is a list of [inputs, labels]
+            inputs, labels = data
+
+            # zero the parameter gradients
+            optimizer.zero_grad()
+
+            # forward + backward + optimize
+            outputs = model(inputs)
+            loss = loss_fn(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            # print statistics
+            running_loss += loss.item()
+            epoch_steps += 1
+
+            if i % 100 == 0:  # print every 100 mini-batches
+                print(
+                    "[%d, %5d] loss: %.3f"
+                    % (epoch + 1, i + 1, running_loss / (epoch_steps+1))
+                )
+                running_loss = 0.0
+
+    save_model(model)
+
+def predict(model, data, classes):
+    classes = [
+        "Zero",
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+    ]
+
+    model.eval()
+    
+    with torch.no_grad():
+        for i in range(10):
+            x, y = data[i][0], data[i][1]
+            pred = model(x)
+            predicted, actual = classes[pred[0].argmax(0)], classes[y]
+            print(f'Predicted: "{predicted}", Actual: "{actual}"')
+
+def model_selection(config):
+    scheduler = ASHAScheduler(
+        metric="val_loss",
+        mode="min",
+        max_t=20,
+        grace_period=1,
+        reduction_factor=2,
+    )
+
+    result = tune.run(
+        train_model,
+        resources_per_trial={"cpu": 2},
+        config=config,
+        num_samples= 1,
+        scheduler=scheduler,
+        
+    )
+
+    best_trial = result.get_best_trial("val_loss", "min", "last")
+    print(f"Best trial config: {best_trial.config}")
+    print(f"Best trial final validation loss: {best_trial.last_result['val_loss']}")
+    print(f"Best trial final validation accuracy: {best_trial.last_result['accuracy']}")
+
+    return best_trial
 
 def main():
-    import os
+    parser = argparse.ArgumentParser(description='--training (-t) for model selection',)
+    parser.add_argument('-t', '--training', action='store_true')
+    training = vars(parser.parse_args())['training']
 
-    scaling_config = ScalingConfig(
-        num_workers = 2,
-        use_gpu = False
-    )
-    run_config = RunConfig(
-        storage_path = os.path.abspath("./artifacts"),
-        name = "distributed-mnist"
-    )
-    train_loop_config = {
-        "seed": 42,
-        "num_epochs": 20,
-        "global_batch_size": 50
-    }
+    if training:
+        config = {
+            "hidden": tune.choice([512]),
+            "lr": 0.00013292918943162168, #tune.loguniform(1e-5, 1e-2),
+            "batch_size": tune.choice([50]),
+            "epochs" : tune.choice([20])
+        }
+        best_trial = model_selection(config)
 
-    trainer = TorchTrainer(
-        run_training,
-        scaling_config = scaling_config,
-        run_config = run_config,
-        train_loop_config = train_loop_config,
-    )
-    result = trainer.fit()
-    print(result.metrics_dataframe)
-    print(result.checkpoint)
-
+        retrain(best_trial.config) # retrain and save model params
+    
     model = MLPNet()
-    with result.checkpoint.as_directory() as dir:
-        model.load_state_dict( torch.load(os.path.join(dir, 'model.pt'), weights_only= True) )
-
-    result = run_test(model)
-    print("Accuracy: ", result)
+    model = load_model(model)
+        
+    test_acc = test_model(model, dir_path=DATASET_PATH)
+    print("Test set accuracy: {}".format(test_acc))
 
 if __name__ == "__main__":
     main()

@@ -132,13 +132,12 @@ def federated_training(model, hp, n_rounds=1, n_clients=5):
     for round_num in range(n_rounds):
         print(f"\n--- Round {round_num + 1} ---")
 
-        [ client.update_training.remote(ds_gen.get_trset()) for client in clients ]
-
         # Server sends current model to clients
         global_model = ray.get(server.send_model.remote())
 
         for client in clients:
             client.receive_model.remote(global_model, hp)
+            client.update_training.remote(ds_gen.get_trset())
 
         # Clients perform local training
         client_model_refs = [client.local_train.remote() for client in clients]
