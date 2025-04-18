@@ -21,7 +21,6 @@ def get_generator():
 
 def data_load(dataset_path):
     # Download training data from open datasets
-    # Dataset stores the samples and their corresponding labels
     transform = Compose([ToTensor(), Normalize((0.5,), (0.5,))])
     target_transform = Lambda(lambda y: torch.zeros(
         10, dtype=torch.float).scatter_(dim=0, index=torch.tensor(y), value=1)
@@ -64,7 +63,6 @@ class ds_generator():
         self.dsets = dsets
 
     def _make_generator(self):
-        #yield from self.dsets
         for ds in self.dsets:
             yield ds
 
@@ -73,14 +71,11 @@ class ds_generator():
 
 
 def average_state_dicts(dicts):
-    # Ensure the list is not empty
     if not dicts:
         return {}
 
-    # Initialize a new dictionary
     avg_dict = {}
 
-    # Iterate through keys of the first dictionary
     for key in dicts[0].keys():
         # Stack all tensors for this key
         stacked = torch.stack([d[key] for d in dicts])
