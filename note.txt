@@ -29,7 +29,7 @@ Link dataset: https://archive.ics.uci.edu/dataset/855/tuandromd+(tezpur+universi
 Paper: https://www.semanticscholar.org/paper/97e4780810c69604f6e2f2f4e31b88bbef7ca669
 
 Tuttavia, il dataset in questione è incompleto e sbilanciato nelle classi, per cui non è semplice allenare un modello in modo unbiased e ottenere delle buone prestazioni di partenza.
-Per questo motivo, ho pensato di aggiungere un livello di astrazione, allenando un modello semplice sul dataset MNIST.
+Per questo motivo, ho pensato di aggiungere un livello di astrazione, allenando un modello semplice sul dataset MNIST, che è ben conosciuto in letteratura e non richiede data preprocessing.
 Modello e dataset sono in questo caso attori intercambiabili. Una volta che l'algoritmo è corretto, si può trovare un dataset più interessante e allenarvi sopra un modello più complesso.
 
 ## Result #0:
@@ -42,11 +42,10 @@ Il sistema in questione è stato scritto utilizzando PyTorch e Ray Tune.
 
 ## Result #1:
 Ho replicato un semplice sistema di Federated Learning su cui effettuare esperimenti.
-Come primo asset di sperimentazione, ho istanziato diversi numeri di client su un sistema di apprendimento a round singolo.
+Come prima sperimentazione, ho istanziato diversi numeri di client su un sistema di apprendimento a round singolo.
 Un test sull'affidabilità e la replicabilità dei dati è stato effettuato su un sistema con un solo client, riportando l'accuracy attesa.
 I risultati sono qui riportati:
 N. Round | N. Clients | Accuracy finale
-    1           1           0.9771
     1           2           0.9672
     1           3           0.9588
     1           4           0.9511
@@ -57,8 +56,27 @@ N. Round | N. Clients | Accuracy finale
     1           9           0.9327
     1           10          0.9291
 
+    2           2           0.9688
+    2           3           0.9621
+    2           4           0.9538
+    2           5           0.9497
+    2           6           0.9452
+
+    3           2           0.9678
+    3           3           0.9607
+    3           4           0.9537
+
+I risultati sono stati effettuati fino alla decima partizione del training set.
+Vista la dimensione del dataset scelto, è ragionevole circoscrivere gli esperimenti ad un numero di partizioni tra 2 e 10. 
+Oltre la decima parte, la dimensione del training set locale è troppo piccola.
+Ulteriori esperimenti possono essere effettuati se ritenuto interessante su altre macchine e/o cluster di macchine, con dataset diversi.
+
 Le prestazioni del modello diminuiscono lentamente con la dimensione dei training set locali, pur mantenendo una buona accuracy.
-Vista la dimensione del dataset scelto e la crescente diminuizione dell'accuracy del modello, credo sia ragionevole circoscrivere gli esperimenti su un set di nodi da 2 a 10. Altri esperimenti possono essere effettuati se ritenuto interessante su altre macchine e/o cluster di macchine.
+Come ci si poteva aspettare, a parità di partizioni, sistemi con meno clients e più round performano meglio.
+
+La configurazione <N_ROUND=2, N_CLIENTS=5> sembra un buon setting su cui fare esperimenti:
+- rappresenta un buon trade-off tra accuracy e scalabilità
+- 5 devices per più round è una configurazione semplice ma verosimile per fare learning in cluster.
 
 Fase 1
 - Step 1. Scegliere dataset

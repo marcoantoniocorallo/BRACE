@@ -44,18 +44,18 @@ def data_load(dataset_path):
     return training_data, test_data
 
 class ds_generator():
-    def __init__(self, num_clients):
-        self.num_clients = num_clients
-        self.split_trset(num_clients)
+    def __init__(self, n_split):
+        self.n_split = n_split
+        self.split_trset(n_split)
         self._generator = self._make_generator()
 
-    def split_trset(self, num_clients):
-        assert(num_clients > 0)
+    def split_trset(self, n_split):
+        assert(n_split > 0)
 
         tr_set, _ = data_load(DATASET_PATH)
 
-        portion = 1/num_clients
-        fracs = list([ portion for i in range(num_clients) ])
+        portion = 1/n_split
+        fracs = list([ portion for i in range(n_split) ])
 
         dsets = random_split(
             tr_set, fracs, GENERATOR
