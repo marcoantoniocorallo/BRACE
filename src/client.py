@@ -12,7 +12,7 @@ class Client:
         self.model = None
         self.hp = None
         self.tr_generator = tr_generator
-        self.tr_set = None
+        self.update_training()
 
     def receive_model(self, model, hp):
         self.model = model

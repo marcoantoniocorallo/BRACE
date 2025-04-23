@@ -36,7 +36,7 @@ Modello e dataset sono in questo caso attori intercambiabili. Una volta che l'al
 Ho preparato un sistema di ML classico sul dataset MNIST, con un modello MLP con 1 hidden layer di 512 neuroni.
 Ho definito funzioni e procedure per allenare il modello sul dataset, effettuare una leggera model selection (ho ridotto al minimo il numero di parametri inseriti nella grid search: un paio di valori per le epoche,
 per la batch-size, per il numero di neuroni nell'hidden layer e il learning rate), ri-allenare il modello scelto sull'intero training set e infine effettuare una valutazione del modello allenato.
-Seguendo questo approccio, la model evaluation sul test set restituisce un'accuracy dello 0.9797 che, considerata l'architettura semplice del modello, i pochi parametri su cui sono state valutate le performances,
+Seguendo questo approccio, la model evaluation sul test set restituisce un'accuracy dello 0.9779 che, considerata l'architettura semplice del modello, i pochi parametri su cui sono state valutate le performances,
 il basso numero di epoche e il mancato utilizzo di tecniche più avanzate (drop-out, RNN, weight-decay, ...) o altri tipi di ottimizzatori, è un ottimo risultato iniziale.
 Il sistema in questione è stato scritto utilizzando PyTorch e Ray Tune.
 
@@ -48,6 +48,8 @@ La model aggregation viene effettuata calcolando la media tra i k modelli locali
 Come prima sperimentazione, ho istanziato diversi numeri di client su un sistema di apprendimento a round singolo.
 Un test sull'affidabilità e la replicabilità dei dati è stato effettuato su un sistema con un solo client, riportando l'accuracy attesa.
 I risultati sono qui riportati:
+
+Training set dinamici (real-time)
 N. Round | N. Clients | N. Clients per Round | Accuracy finale
     1           2                100%              0.9672
     1           3                100%              0.9588
@@ -85,6 +87,13 @@ Ulteriori esperimenti possono essere effettuati se ritenuto interessante su altr
 
 Per iterare per più round, magari fino a raggiungere una buona convergenza,
 si potrebbe pensare di effettuare più round sugli stessi dati di training.
+Alcuni esperimenti sono stati fatti in questo scenario, riporto alcuni risultati:
+
+Training Set fissati
+N. Round | N. Clients | N. Clients per Round | Accuracy finale
+    5           5                100%              0.9779
+
+
 Tuttavia, molti dei contesti in cui si usa il FL (IoT, wearable, automotive, edge, ...)
 prevedono dati dinamici, che evolvono, allenando il modello su dati diversi nel tempo.
 Sembra ragionevole quindi mantenere il focus dell'analisi su questo tipo di sistemi,

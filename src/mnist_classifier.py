@@ -3,7 +3,7 @@
     The model is quite simple: a 1-hidden-layer-MLP with 512 units;
     The optimizer is Adam, learning rate 0.00013292918943162168 and batch-size of 50.
     The model selection has been done by using a 80%-20% Hold-out validation.
-    The test accuracy of the final model is about 0.9779 with 20 epochs and 0.9803 with 30 epochs..
+    The test accuracy of the final model is about 0.9779 with 20 epochs.
 
     It is important to notice that the aim of this model selection 
     is not to find the best model for the MNIST problem,

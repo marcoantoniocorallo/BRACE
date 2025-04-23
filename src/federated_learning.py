@@ -15,8 +15,9 @@ os.environ["RAY_DEDUP_LOGS"]="0"
 import ray # imported after RAY_DEDUP_LOGS
 ray.init(ignore_reinit_error=True)
 
-def federated_training(model, hp, n_rounds=1, n_clients=5, percentage=1):
-    ds_gen = ds_generator(int(n_clients * percentage) * n_rounds)
+def federated_training(model, hp, n_rounds=1, n_clients=5, percentage=1, rtime=False):
+    n_split = int(n_clients * percentage) * (n_rounds if rtime else 1)
+    ds_gen = ds_generator(n_split)
 
     server = Server.remote(model, hp)
     clients = [Client.remote(i, ds_gen) for i in range(n_clients)]
@@ -30,7 +31,8 @@ def federated_training(model, hp, n_rounds=1, n_clients=5, percentage=1):
         chosen_clients = extract_percentage(clients, percentage)
         for client in chosen_clients:
             client.receive_model.remote(global_model, hp)
-            client.update_training.remote()
+            if rtime:
+                client.update_training.remote()
 
         # Clients perform local training
         client_model_refs = [client.local_train.remote() for client in chosen_clients]
@@ -49,6 +51,7 @@ if __name__ == "__main__":
                 "-n     | --n_clients: number of clients (default: 5)\n"
                 "-r     | --rounds: number of rounds (default: 2)\n"
                 "-p     | --percentage: percentage of clients to use (default: 1 (all))\n"
+                "-rtime | --realtime: different tr.set at each round \n"
                 "Ex:\n"
                 "python federated_learning.py -n 10 -r 5 -p 0.5 \n"
                 "will run the simulation with 10 clients, 5 rounds, "
@@ -58,9 +61,11 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--n_clients', type=int, default=5)
     parser.add_argument('-r', '--rounds', type=int, default=2)
     parser.add_argument('-p', '--percentage', type=float, default=1.0)
+    parser.add_argument('-rtime', '--realtime', action='store_true', default=False)
     n_clients = vars(parser.parse_args())['n_clients']
     n_rounds = vars(parser.parse_args())['rounds']
     percentage = vars(parser.parse_args())['percentage']
+    rtime = vars(parser.parse_args())['realtime']
 
     model = MLPNet()
     hp = HP
@@ -69,6 +74,7 @@ if __name__ == "__main__":
         hp=HP, 
         n_clients=n_clients, 
         n_rounds=n_rounds, 
-        percentage=percentage
+        percentage=percentage,
+        rtime=rtime
     )
     ray.shutdown()
