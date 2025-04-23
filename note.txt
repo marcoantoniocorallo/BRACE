@@ -42,6 +42,9 @@ Il sistema in questione è stato scritto utilizzando PyTorch e Ray Tune.
 
 ## Result #1:
 Ho replicato un semplice sistema di Federated Learning su cui effettuare esperimenti.
+La client selection avviene selezionando k <= n client in modo casuale, con k parametro scelto dall'utente.
+La model aggregation viene effettuata calcolando la media tra i k modelli locali.
+
 Come prima sperimentazione, ho istanziato diversi numeri di client su un sistema di apprendimento a round singolo.
 Un test sull'affidabilità e la replicabilità dei dati è stato effettuato su un sistema con un solo client, riportando l'accuracy attesa.
 I risultati sono qui riportati:
@@ -95,6 +98,8 @@ Analizzando le performance del sistema nelle varie configurazioni e considerando
 e un setting (benchè semplice) quanto più verosimile a scenari reali di learning distribuito,
 la configurazione <N_ROUND=2, N_CLIENTS=5> sembra ottimale per effettuare esperimenti con nodi bizantini.
 
+
+
 Fase 1
 X Step 1. Scegliere dataset
 X Step 2. Replicare architettura e risultati attesi 
@@ -103,5 +108,5 @@ Fase 2
 X Step 1. Implementare lo stesso modello su un sistema distribuito (FL) in Ray e vedere i risultati
 - Step 2. Introdurre protocollo di consensus
 - Step 3. Introdurre nodi bizantini (modificando i dataset di quei nodi) e verificare le conseguenze
-- Step 4. Effettuare test con metriche e scelte diverse (client selection, aggregation, ...)
+- Step 4. Effettuare test con metriche e scelte diverse
 - Step 5. Introdurre BRA e altre tecniche di mitigazione per verificare la composizione di più meccanismi
