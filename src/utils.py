@@ -5,6 +5,10 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor, Compose, Normalize, Lambda
 from torch.utils.data import DataLoader, random_split
 
+import os
+os.environ["RAY_DEDUP_LOGS"]="0"
+from ray.util.queue import Queue
+
 SEED = 42
 GENERATOR = torch.manual_seed(SEED)
 
@@ -42,32 +46,27 @@ def data_load(dataset_path):
 
     return training_data, test_data
 
-class ds_generator():
+class ds_generator:
     def __init__(self, n_split):
         self.n_split = n_split
-        self.split_trset(n_split)
-        self._generator = self._make_generator()
+        self.queue = Queue()
+        self._create_splits()
 
-    def split_trset(self, n_split):
-        assert(n_split > 0)
+    def _create_splits(self):
+        assert self.n_split > 0
 
         tr_set, _ = data_load(DATASET_PATH)
 
-        portion = 1/n_split
-        fracs = list([ portion for i in range(n_split) ])
+        portion = 1 / self.n_split
+        fracs = [portion for _ in range(self.n_split)]
 
-        dsets = random_split(
-            tr_set, fracs, GENERATOR
-        )
+        dsets = random_split(tr_set, fracs, GENERATOR)
 
-        self.dsets = dsets
-
-    def _make_generator(self):
-        for ds in self.dsets:
-            yield ds
+        for ds in dsets:
+            self.queue.put(ds)
 
     def get_trset(self):
-        return next(self._generator)
+        return self.queue.get()
 
 
 def average_state_dicts(dicts):

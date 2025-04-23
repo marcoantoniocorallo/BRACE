@@ -7,11 +7,12 @@ import ray
 
 @ray.remote
 class Client:
-    def __init__(self, client_id, training=None):
+    def __init__(self, client_id, tr_generator=None):
         self.client_id = client_id
         self.model = None
         self.hp = None
-        self.tr_set = training
+        self.tr_generator = tr_generator
+        self.tr_set = None
 
     def receive_model(self, model, hp):
         self.model = model
@@ -20,8 +21,8 @@ class Client:
     def send_weights(self):
         return self.model.state_dict()
 
-    def update_training(self, training):
-        self.tr_set = training
+    def update_training(self):
+        self.tr_set = self.tr_generator.get_trset()
 
     def local_train(self):
         loss_fn = torch.nn.CrossEntropyLoss()

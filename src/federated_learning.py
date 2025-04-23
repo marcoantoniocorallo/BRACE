@@ -19,7 +19,7 @@ def federated_training(model, hp, n_rounds=1, n_clients=5, percentage=1):
     ds_gen = ds_generator(int(n_clients * percentage) * n_rounds)
 
     server = Server.remote(model, hp)
-    clients = [Client.remote(i) for i in range(n_clients)]
+    clients = [Client.remote(i, ds_gen) for i in range(n_clients)]
 
     for round_num in range(n_rounds):
         print(f"\n--- Round {round_num + 1} ---")
@@ -30,7 +30,7 @@ def federated_training(model, hp, n_rounds=1, n_clients=5, percentage=1):
         chosen_clients = extract_percentage(clients, percentage)
         for client in chosen_clients:
             client.receive_model.remote(global_model, hp)
-            client.update_training.remote(ds_gen.get_trset())
+            client.update_training.remote()
 
         # Clients perform local training
         client_model_refs = [client.local_train.remote() for client in chosen_clients]
