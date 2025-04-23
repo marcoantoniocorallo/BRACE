@@ -1,5 +1,5 @@
 import argparse
-from utils import set_random_state, get_generator, ds_generator
+from utils import set_random_state, get_generator, ds_generator, extract_percentage
 import os
 
 from global_model import MLPNet, HP
@@ -15,8 +15,8 @@ os.environ["RAY_DEDUP_LOGS"]="0"
 import ray # imported after RAY_DEDUP_LOGS
 ray.init(ignore_reinit_error=True)
 
-def federated_training(model, hp, n_rounds=1, n_clients=5):
-    ds_gen = ds_generator(n_clients * n_rounds)
+def federated_training(model, hp, n_rounds=1, n_clients=5, percentage=1):
+    ds_gen = ds_generator(int(n_clients * percentage) * n_rounds)
 
     server = Server.remote(model, hp)
     clients = [Client.remote(i) for i in range(n_clients)]
@@ -24,15 +24,16 @@ def federated_training(model, hp, n_rounds=1, n_clients=5):
     for round_num in range(n_rounds):
         print(f"\n--- Round {round_num + 1} ---")
 
-        # Server sends current model to clients
+        # Server sends current model to some clients
         global_model = ray.get(server.send_model.remote())
 
-        for client in clients:
+        chosen_clients = extract_percentage(clients, percentage)
+        for client in chosen_clients:
             client.receive_model.remote(global_model, hp)
             client.update_training.remote(ds_gen.get_trset())
 
         # Clients perform local training
-        client_model_refs = [client.local_train.remote() for client in clients]
+        client_model_refs = [client.local_train.remote() for client in chosen_clients]
         client_models = ray.get(client_model_refs)
 
         # Server aggregates the client updates
@@ -44,13 +45,30 @@ def federated_training(model, hp, n_rounds=1, n_clients=5):
 
 # Run the simulation
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=
+                "-n     | --n_clients: number of clients (default: 5)\n"
+                "-r     | --rounds: number of rounds (default: 2)\n"
+                "-p     | --percentage: percentage of clients to use (default: 1 (all))\n"
+                "Ex:\n"
+                "python federated_learning.py -n 10 -r 5 -p 0.5 \n"
+                "will run the simulation with 10 clients, 5 rounds, "
+                "50% of clients participating in each round.\n"
+                "\n"
+    )
     parser.add_argument('-n', '--n_clients', type=int, default=5)
     parser.add_argument('-r', '--rounds', type=int, default=2)
+    parser.add_argument('-p', '--percentage', type=float, default=1.0)
     n_clients = vars(parser.parse_args())['n_clients']
     n_rounds = vars(parser.parse_args())['rounds']
+    percentage = vars(parser.parse_args())['percentage']
 
     model = MLPNet()
     hp = HP
-    federated_training(model=model, hp=HP, n_clients=n_clients, n_rounds=n_rounds)
+    federated_training(
+        model=model, 
+        hp=HP, 
+        n_clients=n_clients, 
+        n_rounds=n_rounds, 
+        percentage=percentage
+    )
     ray.shutdown()

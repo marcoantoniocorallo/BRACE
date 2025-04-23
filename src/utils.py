@@ -83,3 +83,7 @@ def average_state_dicts(dicts):
         avg_dict[key] = stacked.mean(dim=0)
 
     return avg_dict
+
+def extract_percentage(l, percentage):
+    n = int(len(l) * percentage)
+    return random.sample(l, n)
