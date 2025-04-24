@@ -92,6 +92,15 @@ Alcuni esperimenti sono stati fatti in questo scenario, riporto alcuni risultati
 Training Set fissati
 N. Round | N. Clients | N. Clients per Round | Accuracy finale
     5           5                100%              0.9779
+    5           7                100%              0.9740
+    5           7                80%               0.9731
+
+python3 src/federated_learning.py -n 7 -r 5 -p 0.8 -> Final global model accuracy: 0.9737
+python3 src/federated_learning.py -n 7 -r 5 -p 0.7 -> Final global model accuracy: 0.9727
+python3 src/federated_learning.py -n 10 -r 5 -p 0.8 -> Final global model accuracy: 0.9682
+python3 src/federated_learning.py -n 10 -r 5 -p 0.7 -> Final global model accuracy: 0.9681
+python3 src/federated_learning.py -n 5 -r 5 -p 0.8 -> Final global model accuracy: 0.9762
+python3 src/federated_learning.py -n 5 -r 5 -p 0.7 -> Final global model accuracy: 0.9788
 
 
 Tuttavia, molti dei contesti in cui si usa il FL (IoT, wearable, automotive, edge, ...)

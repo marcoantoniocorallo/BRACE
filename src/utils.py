@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from torchvision import datasets
 from torchvision.transforms import ToTensor, Compose, Normalize, Lambda
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import random_split
 
 import os
 os.environ["RAY_DEDUP_LOGS"]="0"
@@ -46,9 +46,16 @@ def data_load(dataset_path):
 
     return training_data, test_data
 
+'''
+Split and yields ds partitions to the clients.
+n_split = {
+    - n_clients             if not rtime
+    - n_clients * n_rounds  if rtime   
+}
+'''
 class ds_generator:
-    def __init__(self, n_split):
-        self.n_split = n_split
+    def __init__(self, n_clients, n_rounds, rtime):
+        self.n_split = n_clients * (n_rounds if rtime else 1)
         self.queue = Queue()
         self._create_splits()
 

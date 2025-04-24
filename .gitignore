@@ -3,3 +3,4 @@ datasets
 *.ipynb
 src/__pycache__/
 results.txt
+logs/

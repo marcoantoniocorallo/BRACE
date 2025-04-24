@@ -16,8 +16,7 @@ import ray # imported after RAY_DEDUP_LOGS
 ray.init(ignore_reinit_error=True)
 
 def federated_training(model, hp, n_rounds=1, n_clients=5, percentage=1, rtime=False):
-    n_split = int(n_clients * percentage) * (n_rounds if rtime else 1)
-    ds_gen = ds_generator(n_split)
+    ds_gen = ds_generator(n_clients=n_clients, n_rounds=n_rounds, rtime=rtime)
 
     server = Server.remote(model, hp)
     clients = [Client.remote(i, ds_gen) for i in range(n_clients)]

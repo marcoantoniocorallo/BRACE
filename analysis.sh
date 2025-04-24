@@ -1,12 +1,16 @@
 #!/bin/bash
 
-n_values=(5)
-r_values=(1)
-p_values=(1.0)
-rtime_flags=(false)
+n_values=(4 5 6)
+r_values=(1 2)
+p_values=(0.8 0.7)
+rtime_flags=(true)
 
 output_file="results.txt"
-> "$output_file"
+>> "$output_file"
+
+echo "\n" >> "$output_file"
+
+mkdir -p logs  # crea la directory per i log se non esiste
 
 for n in "${n_values[@]}"; do
   for r in "${r_values[@]}"; do
@@ -20,10 +24,13 @@ for n in "${n_values[@]}"; do
 
         echo "Running: $cmd"
 
-        # catch last line
-        last_line=$($cmd 2>&1 | tail -n 1)
+        logfile="logs/n${n}_r${r}_p${p}_rtime${rtime}.log"
+        $cmd > "$logfile" 2>&1
 
+        last_line=$(tail -n 1 "$logfile")
         echo "$cmd -> $last_line" >> "$output_file"
+
+        echo "Finished: $cmd"
 
       done
     done
