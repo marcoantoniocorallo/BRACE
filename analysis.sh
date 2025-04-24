@@ -2,13 +2,13 @@
 
 n_values=(4 5 6)
 r_values=(1 2)
-p_values=(0.8 0.7)
+p_values=(1)
 rtime_flags=(true)
 
 output_file="results.txt"
 >> "$output_file"
 
-echo "\n" >> "$output_file"
+echo "--------------------------------------------------------" >> "$output_file"
 
 mkdir -p logs  # crea la directory per i log se non esiste
 

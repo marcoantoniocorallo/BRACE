@@ -30,7 +30,9 @@ def federated_training(model, hp, n_rounds=1, n_clients=5, percentage=1, rtime=F
         chosen_clients = extract_percentage(clients, percentage)
         for client in chosen_clients:
             client.receive_model.remote(global_model, hp)
-            if rtime:
+            
+            # if real-time task, change the dataset at each round
+            if rtime and round_num > 0:
                 client.update_training.remote()
 
         # Clients perform local training
