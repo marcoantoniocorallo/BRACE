@@ -5,7 +5,6 @@ import os
 os.environ["RAY_DEDUP_LOGS"]="0"
 import ray
 
-@ray.remote
 class Client:
     def __init__(self, client_id, tr_generator=None):
         self.client_id = client_id
@@ -64,3 +63,8 @@ class Client:
                     running_loss = 0.0
 
         return self.send_weights()
+
+@ray.remote
+class Ray_Client(Client):
+    def __init__(self, client_id, tr_generator=None):
+        Client.__init__(self, client_id, tr_generator)
