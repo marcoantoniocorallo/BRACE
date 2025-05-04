@@ -1,7 +1,7 @@
 #!/bin/bash
 
 n_values=(4 5 6)
-r_values=(1)
+r_values=(2)
 p_values=(1 0.8 0.7)
 b_values=(1 2 3)
 rtime_flags=(true)
@@ -26,7 +26,7 @@ for n in "${n_values[@]}"; do
 
           echo "Running: $cmd"
 
-          logfile="logs/n${n}_r${r}_p${p}_rtime${rtime}.log"
+          logfile="logs/n${n}_r${r}_p${p}_b${b}_rtime${rtime}.log"
           $cmd > "$logfile" 2>&1
 
           last_line=$(tail -n 1 "$logfile")

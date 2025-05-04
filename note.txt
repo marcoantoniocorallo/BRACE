@@ -88,7 +88,6 @@ N. Round | N. Clients (tot) | Client selection per Round | Accuracy finale | N. 
 
 # num client 4 5 6, setting real-time con 1 round
 # TODO: num client 2, 3, 7, 8, 9, 10 con 1 round 
-# TODO: num client 2, 3, 4, 5, 6 con 2 round 
 python3 src/federated_learning.py -n 4 -r 1 -p 1 -b 1 -rtime -> Final global model accuracy: 0.9154
 python3 src/federated_learning.py -n 4 -r 1 -p 1 -b 2 -rtime -> Final global model accuracy: 0.7508
 python3 src/federated_learning.py -n 4 -r 1 -p 1 -b 3 -rtime -> Final global model accuracy: 0.7492
@@ -117,6 +116,36 @@ python3 src/federated_learning.py -n 6 -r 1 -p 0.7 -b 1 -rtime -> Final global m
 python3 src/federated_learning.py -n 6 -r 1 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.914
 python3 src/federated_learning.py -n 6 -r 1 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.7395
 
+# num client 2, 3, 4, 5, 6 con 2 round 
+python3 src/federated_learning.py -n 4 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.9533
+python3 src/federated_learning.py -n 4 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.9524
+python3 src/federated_learning.py -n 4 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.9523
+python3 src/federated_learning.py -n 4 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.9528
+python3 src/federated_learning.py -n 4 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.9514
+python3 src/federated_learning.py -n 4 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.9521
+python3 src/federated_learning.py -n 4 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.9528
+python3 src/federated_learning.py -n 4 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.9517
+python3 src/federated_learning.py -n 4 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.9517
+python3 src/federated_learning.py -n 5 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.9511
+python3 src/federated_learning.py -n 5 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.9496
+python3 src/federated_learning.py -n 5 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.9504
+python3 src/federated_learning.py -n 5 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.9496
+python3 src/federated_learning.py -n 5 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.9483
+python3 src/federated_learning.py -n 5 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.9481
+python3 src/federated_learning.py -n 5 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.948
+python3 src/federated_learning.py -n 5 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.9488
+python3 src/federated_learning.py -n 5 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.9474
+python3 src/federated_learning.py -n 6 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.9446
+python3 src/federated_learning.py -n 6 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.9439
+python3 src/federated_learning.py -n 6 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.9433
+python3 src/federated_learning.py -n 6 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.9428
+python3 src/federated_learning.py -n 6 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.9437
+python3 src/federated_learning.py -n 6 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.942
+python3 src/federated_learning.py -n 6 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.9428
+python3 src/federated_learning.py -n 6 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.9434
+python3 src/federated_learning.py -n 6 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.9432
+
+
 I risultati sono stati effettuati fino alla decima partizione del training set.
 Vista la dimensione del dataset scelto, è ragionevole circoscrivere gli esperimenti ad un numero di partizioni tra 2 e 10. 
 Oltre la decima parte, la dimensione del training set locale è troppo piccola.
@@ -137,6 +166,43 @@ N. Round | N. Clients | N. Clients per Round | Accuracy finale
     5           10               100%              0.9677
     5           10               80%               0.9682
     5           10               70%               0.9681
+
+python3 src/federated_learning.py -n 5 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.9736
+python3 src/federated_learning.py -n 5 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.9691
+python3 src/federated_learning.py -n 5 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.9321
+python3 src/federated_learning.py -n 5 -r 5 -p 1 -b 5 -> Final global model accuracy: 0.7674
+python3 src/federated_learning.py -n 5 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.9738
+python3 src/federated_learning.py -n 5 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.9729
+python3 src/federated_learning.py -n 5 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.9579
+python3 src/federated_learning.py -n 5 -r 5 -p 0.8 -b 5 -> Final global model accuracy: 0.7676
+python3 src/federated_learning.py -n 5 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.9759
+python3 src/federated_learning.py -n 5 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.975
+python3 src/federated_learning.py -n 5 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.9658
+python3 src/federated_learning.py -n 5 -r 5 -p 0.7 -b 5 -> Final global model accuracy: 0.7684
+python3 src/federated_learning.py -n 7 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.9718
+python3 src/federated_learning.py -n 7 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.9678
+python3 src/federated_learning.py -n 7 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.9589
+python3 src/federated_learning.py -n 7 -r 5 -p 1 -b 5 -> Final global model accuracy: 0.7964
+python3 src/federated_learning.py -n 7 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.9689
+python3 src/federated_learning.py -n 7 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.962
+python3 src/federated_learning.py -n 7 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.9608
+python3 src/federated_learning.py -n 7 -r 5 -p 0.8 -b 5 -> Final global model accuracy: 0.7937
+python3 src/federated_learning.py -n 7 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.9688
+python3 src/federated_learning.py -n 7 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.97
+python3 src/federated_learning.py -n 7 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.9701
+python3 src/federated_learning.py -n 7 -r 5 -p 0.7 -b 5 -> Final global model accuracy: 0.9081
+python3 src/federated_learning.py -n 10 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.9676
+python3 src/federated_learning.py -n 10 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.9656
+python3 src/federated_learning.py -n 10 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.9625
+python3 src/federated_learning.py -n 10 -r 5 -p 1 -b 5 -> Final global model accuracy: 0.9439
+python3 src/federated_learning.py -n 10 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.9657
+python3 src/federated_learning.py -n 10 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.9638
+python3 src/federated_learning.py -n 10 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.961
+python3 src/federated_learning.py -n 10 -r 5 -p 0.8 -b 5 -> Final global model accuracy: 0.9441
+python3 src/federated_learning.py -n 10 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.9662
+python3 src/federated_learning.py -n 10 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.9615
+python3 src/federated_learning.py -n 10 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.9519
+python3 src/federated_learning.py -n 10 -r 5 -p 0.7 -b 5 -> Final global model accuracy: 0.9315
 
 Tuttavia, molti dei contesti in cui si usa il FL (IoT, wearable, automotive, edge, ...)
 prevedono dati dinamici, che evolvono, allenando il modello su dati diversi nel tempo.
