@@ -211,6 +211,12 @@ allenati per 2 o 5 round rispettivamente per task real-time o a dati fissi.
 
 Su queste configurazioni sono state effettuate analisi delle prestazioni all'introduzione di nodi bizantini.
 
+L'implementazione scelta dei nodi bizantini riguarda la tipologia d'attacco considerata "default" in letteratura,
+ovvero il _label flipping_: i nodi bizantini istanziati, appena prima del training,
+invertono le label dei sample contenenti "1" e "7".
+Si può aumentare il rumore invertendo altri sample, e si possono testare le performance del sistema 
+introducendo nuovi tipi di nodi bizantini, che implementino attacchi di diverso tipo.
+
 ## Result #2:
 Come ci si poteva aspettare, all'aumentare del numero di nodi bizantini l'accuracy diminuisce.
 In particolare, segue le successioni:
