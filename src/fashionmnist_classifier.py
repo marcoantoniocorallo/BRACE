@@ -1,18 +1,18 @@
 '''
-    Definition of a simple, centralized, MNIST classifier.
+    Definition of a simple, centralized, FashionMNIST classifier.
     The model is quite simple: a 1-hidden-layer-MLP with 512 units;
     The optimizer is Adam, learning rate 0.00013292918943162168 and batch-size of 50.
     The model selection has been done by using a 80%-20% Hold-out validation.
     The test accuracy of the final model is about 0.9779 with 20 epochs.
 
     It is important to notice that the aim of this model selection 
-    is not to find the best model for the MNIST problem,
+    is not to find the best model for the FashionMNIST problem,
     but to find a simple but still good model to use in a federated learning experimental analysis.
 '''
 
 import argparse
 from utils import DATASET_PATH, MODEL_PATH, set_random_state, get_generator, data_load
-from utils import MNIST_MODEL_FILE as MODEL_FILE
+from utils import FASHIONMNIST_MODEL_FILE as MODEL_FILE
 import torch
 from torch.utils.data import DataLoader, random_split
 from ray import tune
@@ -29,9 +29,9 @@ def train_model(config):
 
     model = MLPNet(hidden = config["hidden"])
     optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
-    loss_fn = torch.nn.CrossEntropyLoss() # suitable for multiclass classification tasks like MNIST
+    loss_fn = torch.nn.CrossEntropyLoss() # suitable for multiclass classification tasks like FashionMNIST
 
-    trainset, _ = data_load(dir_path, "mnist")
+    trainset, _ = data_load(dir_path, "FashionMNIST")
 
     test_abs = int(len(trainset) * 0.8)
     
@@ -101,14 +101,14 @@ def train_model(config):
                 val_loss += loss.cpu().numpy()
                 val_steps += 1
 
-        train.report(
+        tune.report(
             {"val_loss": val_loss / val_steps, "accuracy": correct / total}
         )
 
     print("Finished Training")
 
 def test_model(model, dir_path):
-    _, testset = data_load(dir_path, "mnist")
+    _, testset = data_load(dir_path, "FashionMNIST")
 
     testloader = torch.utils.data.DataLoader(
         testset, batch_size=4, shuffle=False, num_workers=2
@@ -149,7 +149,7 @@ def retrain(config):
 
     loss_fn = torch.nn.CrossEntropyLoss()
 
-    trainset, _ = data_load(dir_path, "mnist") # full trset
+    trainset, _ = data_load(dir_path, "FashionMNIST") # full trset
 
     # DataLoader wraps an iterable around the Dataset
     train_dataloader = DataLoader(
@@ -192,16 +192,16 @@ def retrain(config):
 
 def predict(model, data, classes):
     classes = [
-        "Zero",
-        "One",
-        "Two",
-        "Three",
-        "Four",
-        "Five",
-        "Six",
-        "Seven",
-        "Eight",
-        "Nine",
+        "T-shirt/top",
+        "Trouser",
+        "Pullover",
+        "Dress",
+        "Coat",
+        "Sandal",
+        "Shirt",
+        "Sneaker",
+        "Bag",
+        "Ankle boot",
     ]
 
     model.eval()
@@ -246,9 +246,9 @@ def main():
     if training:
         config = {
             "hidden": tune.choice([512]),
-            "lr": 0.00013292918943162168, #tune.loguniform(1e-5, 1e-2),
+            "lr": 0.000362561763457623, #tune.loguniform(1e-5, 1e-3),
             "batch_size": tune.choice([50]),
-            "epochs" : tune.choice([20])
+            "epochs" : tune.choice([20]),
         }
         best_trial = model_selection(config)
 
