@@ -364,6 +364,9 @@ Le proprietà prese in considerazione sono:
 - verosimiglianza dell'ambiente => n. round >= 5
 Sulla base di queste assunzioni, la configurazione presa in esame è <5 client, 5 round, tr.set fissati>.
 
+# FashionMNIST
+{'hidden': 512, 'lr': 0.000362561763457623, 'batch_size': 50, 'epochs': 20} => 0.8821
+
 Fase 1
 X Step 1. Scegliere dataset
 X Step 2. Replicare architettura e risultati attesi 

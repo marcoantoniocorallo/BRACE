@@ -14,7 +14,8 @@ GENERATOR = torch.manual_seed(SEED)
 
 DATASET_PATH = "./datasets/"
 MODEL_PATH = "./models/"
-MODEL_FILE = "model.pth"
+MNIST_MODEL_FILE = "mnist_model.pth"
+FASHIONMNIST_MODEL_FILE = "fashionmnist_model.pth"
 
 def set_random_state():
     random.seed(SEED)
@@ -23,27 +24,48 @@ def set_random_state():
 def get_generator():
     return GENERATOR
 
-def data_load(dataset_path):
+def data_load(dataset_path, dataset_name):
     # Download training data from open datasets
     transform = Compose([ToTensor(), Normalize((0.5,), (0.5,))])
     target_transform = Lambda(lambda y: torch.zeros(
         10, dtype=torch.float).scatter_(dim=0, index=torch.tensor(y), value=1)
     )
-    training_data = datasets.MNIST(
-        root=dataset_path,
-        train=True,
-        download=True,
-        transform=transform,
-        target_transform=target_transform
-    )
 
-    test_data = datasets.MNIST(
-        root=dataset_path,
-        train=False,
-        download=True,
-        transform=transform,
-    )
+    training_data, test_data = None, None
 
+    if dataset_name.lower() == "fashionmnist" or dataset_name.lower() == "fashion":
+        training_data = datasets.FashionMNIST(
+            root=dataset_path,
+            train=True,
+            download=True,
+            transform=transform,
+            target_transform=target_transform
+        )
+
+        test_data = datasets.FashionMNIST(
+            root=dataset_path,
+            train=False,
+            download=True,
+            transform=transform,
+        )
+    elif dataset_name.lower() == "mnist":
+        training_data = datasets.MNIST(
+            root=dataset_path,
+            train=True,
+            download=True,
+            transform=transform,
+            target_transform=target_transform
+        )
+
+        test_data = datasets.MNIST(
+            root=dataset_path,
+            train=False,
+            download=True,
+            transform=transform,
+        )
+    else:
+        raise ValueError(f"Unknown dataset: {dataset_name}")
+    
     return training_data, test_data
 
 '''
@@ -54,15 +76,16 @@ n_split = {
 }
 '''
 class ds_generator:
-    def __init__(self, n_clients, n_rounds, rtime):
+    def __init__(self, n_clients, n_rounds, rtime, task):
         self.n_split = n_clients * (n_rounds if rtime else 1)
+        self.task = task
         self.queue = Queue()
         self._create_splits()
 
     def _create_splits(self):
         assert self.n_split > 0
 
-        tr_set, _ = data_load(DATASET_PATH)
+        tr_set, _ = data_load(DATASET_PATH, dataset_name = self.task)
 
         portion = 1 / self.n_split
         fracs = [portion for _ in range(self.n_split)]

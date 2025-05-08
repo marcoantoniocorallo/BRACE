@@ -25,8 +25,14 @@ class MLPNet(torch.nn.Module):
         x = torch.softmax(self.l2(x), 1)
         return x
     
-HP = {
+MNIST_HP = {
     "lr" : 0.00013292918943162168,
+    "batch_size" : 50,
+    "epochs" : 20,
+}
+
+FASHIONMNIST_HP = {
+    "lr" : 0.000362561763457623,
     "batch_size" : 50,
     "epochs" : 20,
 }

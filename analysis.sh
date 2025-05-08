@@ -1,9 +1,10 @@
 #!/bin/bash
 
+task="fashionmnist"
 n_values=(4 5 6)
-r_values=(2)
+r_values=(1 2)
 p_values=(1 0.8 0.7)
-b_values=(1 2 3)
+b_values=(0 1 2 3)
 rtime_flags=(true)
 
 output_file="results.txt"
@@ -19,7 +20,7 @@ for n in "${n_values[@]}"; do
       for b in "${b_values[@]}"; do
         for rtime in "${rtime_flags[@]}"; do
 
-          cmd="python3 src/federated_learning.py -n $n -r $r -p $p -b $b"
+          cmd="python3 src/federated_learning.py -t $task -n $n -r $r -p $p -b $b"
           if [ "$rtime" = true ]; then
             cmd="$cmd -rtime"
           fi

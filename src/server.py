@@ -8,9 +8,10 @@ import ray
 
 @ray.remote
 class Server:
-    def __init__(self, model, hp,):
+    def __init__(self, model, hp, task):
         self.model = model
         self.hp = hp
+        self.task = task
 
     def get_model(self):
         return self.model
@@ -28,7 +29,7 @@ class Server:
         return self.model.state_dict()
     
     def test_model(self):
-        _, testset = data_load(DATASET_PATH)
+        _, testset = data_load(DATASET_PATH, dataset_name=self.task)
 
         testloader = torch.utils.data.DataLoader(
             testset, batch_size=4, shuffle=False, num_workers=2
