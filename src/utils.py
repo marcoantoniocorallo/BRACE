@@ -16,6 +16,7 @@ DATASET_PATH = "./datasets/"
 MODEL_PATH = "./models/"
 MNIST_MODEL_FILE = "mnist_model.pth"
 FASHIONMNIST_MODEL_FILE = "fashionmnist_model.pth"
+KMNIST_MODEL_FILE = "kmnist_model.pth"
 
 def set_random_state():
     random.seed(SEED)
@@ -31,9 +32,10 @@ def data_load(dataset_path, dataset_name):
         10, dtype=torch.float).scatter_(dim=0, index=torch.tensor(y), value=1)
     )
 
+
     training_data, test_data = None, None
 
-    if dataset_name.lower() == "fashionmnist" or dataset_name.lower() == "fashion":
+    if dataset_name.lower() == "fashionmnist":
         training_data = datasets.FashionMNIST(
             root=dataset_path,
             train=True,
@@ -58,6 +60,22 @@ def data_load(dataset_path, dataset_name):
         )
 
         test_data = datasets.MNIST(
+            root=dataset_path,
+            train=False,
+            download=True,
+            transform=transform,
+        )
+
+    elif dataset_name.lower() == "kmnist":
+        training_data = datasets.KMNIST(
+            root=dataset_path,
+            train=True,
+            download=True,
+            transform=transform,
+            target_transform=target_transform
+        )
+
+        test_data = datasets.KMNIST(
             root=dataset_path,
             train=False,
             download=True,

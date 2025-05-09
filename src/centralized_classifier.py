@@ -11,7 +11,7 @@
 '''
 
 import argparse
-from utils import DATASET_PATH, MODEL_PATH, MNIST_MODEL_FILE, FASHIONMNIST_MODEL_FILE, set_random_state, get_generator, data_load
+from utils import DATASET_PATH, MODEL_PATH, MNIST_MODEL_FILE, FASHIONMNIST_MODEL_FILE, KMNIST_MODEL_FILE, set_random_state, get_generator, data_load
 import torch
 from torch.utils.data import DataLoader, random_split
 from ray import tune
@@ -24,7 +24,8 @@ GENERATOR = get_generator()
 
 MODEL_FILE = {
     "mnist": MODEL_PATH + MNIST_MODEL_FILE,
-    "fashionmnist": MODEL_PATH + FASHIONMNIST_MODEL_FILE
+    "fashionmnist": MODEL_PATH + FASHIONMNIST_MODEL_FILE,
+    "kmnist": MODEL_PATH + KMNIST_MODEL_FILE,
 }
 
 def train_model(config):
@@ -228,18 +229,24 @@ def main():
     training = vars(parser.parse_args())['training']
     task = vars(parser.parse_args())['task']
 
-    assert(task in ["mnist", "fashionmnist"]), "Task must be mnist or fashionmnist"
+    assert(task in ["mnist", "fashionmnist", "kmnist"]), "Task must be mnist, kminst or fashionmnist"
 
     if training:
-        config = {
+        config = { # MNIST
             "hidden": tune.choice([512]),
             "lr": 0.00013292918943162168, #tune.loguniform(1e-5, 1e-2),
             "batch_size": tune.choice([50]),
             "epochs" : tune.choice([20]),
             "task" : task,
-        } if task == "mnist" else {
+        } if task == "mnist" else { # FASHIONMNIST
             "hidden": tune.choice([512]),
             "lr": 0.000362561763457623, #tune.loguniform(1e-5, 1e-2),
+            "batch_size": tune.choice([50]),
+            "epochs" : tune.choice([20]),
+            "task" : task,
+        } if task == "fashionmnist" else { # KMNIST
+            "hidden": tune.choice([512]),
+            "lr": 0.0006838478430964042, #tune.loguniform(1e-5, 1e-2),
             "batch_size": tune.choice([50]),
             "epochs" : tune.choice([20]),
             "task" : task,

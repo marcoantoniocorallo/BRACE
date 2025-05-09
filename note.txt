@@ -478,6 +478,12 @@ python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 1 -> Fina
 python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.8743
 python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.853
 
+KMNIST: {'hidden': 512, 'lr': 0.0006838478430964042, 'batch_size': 50, 'epochs': 20, 'task': 'kmnist'} => 0.8928
+
+# Note: KMNIST e FMNIST sono più "difficili" rispetto a MNIST, per ottenere valori più alti bisognerebbe cambiare modello
+# Per l'analisi in oggetto non è importante l'accuracy assoluta, ho scelto quindi di mantenere la stessa architettura neurale,
+# cambiando gli iperparametri. Dalle varie grid-search, comunque, solo il lr cambia per i tre modelli.
+
 Fase 1
 X Step 1. Scegliere dataset
 X Step 2. Replicare architettura e risultati attesi 
