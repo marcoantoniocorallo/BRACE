@@ -73,8 +73,7 @@ def federated_training(
     accuracy = ray.get(server.test_model.remote())
     print("\nFinal global model accuracy:", accuracy)
 
-# Run the simulation
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description=
                 "-t     | --task: task to run (mnist | fashionmnist)\n"
                 "-n     | --n_clients: number of clients (default: 5)\n"
@@ -121,3 +120,7 @@ if __name__ == "__main__":
         n_byzantine=n_byzantine
     )
     ray.shutdown()
+
+# Run the simulation
+if __name__ == "__main__":
+    main()

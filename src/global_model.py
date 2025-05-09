@@ -1,3 +1,9 @@
+'''
+    Definition of a simple classifier, found via model selection in classifier.py.
+    The model is quite simple: a 1-hidden-layer-MLP with 512 units;
+    The optimizer is Adam, batch-size is 50 and lr varies with the task.
+'''
+
 from utils import set_random_state, get_generator
 import torch
 

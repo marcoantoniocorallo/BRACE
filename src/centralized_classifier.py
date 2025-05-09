@@ -1,22 +1,21 @@
 '''
-    Definition of a simple, centralized, FashionMNIST classifier.
+    Definition of a simple, centralized classifier.
     The model is quite simple: a 1-hidden-layer-MLP with 512 units;
-    The optimizer is Adam, learning rate 0.00013292918943162168 and batch-size of 50.
+    The optimizer is Adam, batch-size is 50 and lr varies with the task.
     The model selection has been done by using a 80%-20% Hold-out validation.
-    The test accuracy of the final model is about 0.9779 with 20 epochs.
+    The final performance of the selected model are reported, per task, in the project report.
 
     It is important to notice that the aim of this model selection 
-    is not to find the best model for the FashionMNIST problem,
-    but to find a simple but still good model to use in a federated learning experimental analysis.
+    is not to find the best model for the chosen task,
+    but to find a simple yet efficient model to use in a federated learning experimental analysis.
 '''
 
 import argparse
 from utils import DATASET_PATH, MODEL_PATH, set_random_state, get_generator, data_load
-from utils import FASHIONMNIST_MODEL_FILE as MODEL_FILE
+from utils import MNIST_MODEL_FILE, FASHIONMNIST_MODEL_FILE
 import torch
 from torch.utils.data import DataLoader, random_split
 from ray import tune
-from ray import train
 from ray.tune.schedulers import ASHAScheduler
 from global_model import MLPNet
 
@@ -29,9 +28,9 @@ def train_model(config):
 
     model = MLPNet(hidden = config["hidden"])
     optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
-    loss_fn = torch.nn.CrossEntropyLoss() # suitable for multiclass classification tasks like FashionMNIST
+    loss_fn = torch.nn.CrossEntropyLoss() # suitable for multiclass classification tasks
 
-    trainset, _ = data_load(dir_path, "FashionMNIST")
+    trainset, _ = data_load(dir_path, config["task"])
 
     test_abs = int(len(trainset) * 0.8)
     
@@ -107,8 +106,8 @@ def train_model(config):
 
     print("Finished Training")
 
-def test_model(model, dir_path):
-    _, testset = data_load(dir_path, "FashionMNIST")
+def test_model(model, dir_path, task):
+    _, testset = data_load(dir_path, task)
 
     testloader = torch.utils.data.DataLoader(
         testset, batch_size=4, shuffle=False, num_workers=2
@@ -133,23 +132,23 @@ def test_model(model, dir_path):
 
     return correct / total
 
-def save_model(model):
-    torch.save(model.state_dict(), MODEL_PATH + MODEL_FILE)
-    print("Saved PyTorch Model State to " + MODEL_PATH + MODEL_FILE)
+def save_model(model, model_file):
+    torch.save(model.state_dict(), model_file)
+    print("Saved PyTorch Model State to " + model_file)
 
-def load_model(model):
-    model.load_state_dict(torch.load(MODEL_PATH + MODEL_FILE, weights_only=True))
+def load_model(model, model_file):
+    model.load_state_dict(torch.load(model_file, weights_only=True))
     return model
 
 # retrain on the entire training set!
-def retrain(config):
+def retrain(config, task):
     dir_path = DATASET_PATH
     model = MLPNet(hidden = config["hidden"])
     optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
 
     loss_fn = torch.nn.CrossEntropyLoss()
 
-    trainset, _ = data_load(dir_path, "FashionMNIST") # full trset
+    trainset, _ = data_load(dir_path, task) # full trset
 
     # DataLoader wraps an iterable around the Dataset
     train_dataloader = DataLoader(
@@ -188,30 +187,7 @@ def retrain(config):
                 )
                 running_loss = 0.0
 
-    save_model(model)
-
-def predict(model, data, classes):
-    classes = [
-        "T-shirt/top",
-        "Trouser",
-        "Pullover",
-        "Dress",
-        "Coat",
-        "Sandal",
-        "Shirt",
-        "Sneaker",
-        "Bag",
-        "Ankle boot",
-    ]
-
-    model.eval()
-    
-    with torch.no_grad():
-        for i in range(10):
-            x, y = data[i][0], data[i][1]
-            pred = model(x)
-            predicted, actual = classes[pred[0].argmax(0)], classes[y]
-            print(f'Predicted: "{predicted}", Actual: "{actual}"')
+    save_model(model, MODEL_PATH + (MNIST_MODEL_FILE if task == "mnist" else FASHIONMNIST_MODEL_FILE))
 
 def model_selection(config):
     scheduler = ASHAScheduler(
@@ -239,25 +215,39 @@ def model_selection(config):
     return best_trial
 
 def main():
-    parser = argparse.ArgumentParser(description='--training (-t) for model selection',)
-    parser.add_argument('-t', '--training', action='store_true')
+    parser = argparse.ArgumentParser(description=
+        "-t     | --task: task to run (mnist | fashionmnist)\n"
+        "         --training (-t) for model selection\n",
+    )
+    parser.add_argument('-t', '--task', type=str)
+    parser.add_argument('--training', action='store_true')
     training = vars(parser.parse_args())['training']
+    task = vars(parser.parse_args())['task']
+
+    assert(task in ["mnist", "fashionmnist", "fashion"]), "Task must be mnist or fashionmnist"
 
     if training:
         config = {
             "hidden": tune.choice([512]),
-            "lr": 0.000362561763457623, #tune.loguniform(1e-5, 1e-3),
+            "lr": 0.00013292918943162168, #tune.loguniform(1e-5, 1e-2),
             "batch_size": tune.choice([50]),
             "epochs" : tune.choice([20]),
+            "task" : task,
+        } if task == "mnist" else {
+            "hidden": tune.choice([512]),
+            "lr": 0.000362561763457623, #tune.loguniform(1e-5, 1e-2),
+            "batch_size": tune.choice([50]),
+            "epochs" : tune.choice([20]),
+            "task" : task,
         }
         best_trial = model_selection(config)
 
-        retrain(best_trial.config) # retrain and save model params
+        retrain(best_trial.config, task) # retrain and save model params
     
     model = MLPNet()
-    model = load_model(model)
+    model = load_model(model, MODEL_PATH + (MNIST_MODEL_FILE if task == "mnist" else FASHIONMNIST_MODEL_FILE))
         
-    test_acc = test_model(model, dir_path=DATASET_PATH)
+    test_acc = test_model(model, dir_path=DATASET_PATH, task=task)
     print("Test set accuracy: {}".format(test_acc))
 
 if __name__ == "__main__":
