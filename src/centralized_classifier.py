@@ -11,8 +11,7 @@
 '''
 
 import argparse
-from utils import DATASET_PATH, MODEL_PATH, set_random_state, get_generator, data_load
-from utils import MNIST_MODEL_FILE, FASHIONMNIST_MODEL_FILE
+from utils import DATASET_PATH, MODEL_PATH, MNIST_MODEL_FILE, FASHIONMNIST_MODEL_FILE, set_random_state, get_generator, data_load
 import torch
 from torch.utils.data import DataLoader, random_split
 from ray import tune
@@ -22,6 +21,11 @@ from global_model import MLPNet
 # reproducibility
 set_random_state()
 GENERATOR = get_generator()
+
+MODEL_FILE = {
+    "mnist": MODEL_PATH + MNIST_MODEL_FILE,
+    "fashionmnist": MODEL_PATH + FASHIONMNIST_MODEL_FILE
+}
 
 def train_model(config):
     dir_path = DATASET_PATH
@@ -187,7 +191,7 @@ def retrain(config, task):
                 )
                 running_loss = 0.0
 
-    save_model(model, MODEL_PATH + (MNIST_MODEL_FILE if task == "mnist" else FASHIONMNIST_MODEL_FILE))
+    save_model(model, MODEL_FILE[task])
 
 def model_selection(config):
     scheduler = ASHAScheduler(
@@ -224,7 +228,7 @@ def main():
     training = vars(parser.parse_args())['training']
     task = vars(parser.parse_args())['task']
 
-    assert(task in ["mnist", "fashionmnist", "fashion"]), "Task must be mnist or fashionmnist"
+    assert(task in ["mnist", "fashionmnist"]), "Task must be mnist or fashionmnist"
 
     if training:
         config = {
@@ -245,7 +249,7 @@ def main():
         retrain(best_trial.config, task) # retrain and save model params
     
     model = MLPNet()
-    model = load_model(model, MODEL_PATH + (MNIST_MODEL_FILE if task == "mnist" else FASHIONMNIST_MODEL_FILE))
+    model = load_model(model, MODEL_FILE[task])
         
     test_acc = test_model(model, dir_path=DATASET_PATH, task=task)
     print("Test set accuracy: {}".format(test_acc))
