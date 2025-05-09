@@ -6,11 +6,12 @@ os.environ["RAY_DEDUP_LOGS"]="0"
 import ray
 
 class Client:
-    def __init__(self, client_id, tr_generator=None):
+    def __init__(self, client_id, task, tr_generator=None):
         self.client_id = client_id
         self.model = None
         self.hp = None
         self.tr_generator = tr_generator
+        self.task = task
         self.update_training()
 
     def receive_model(self, model, hp):

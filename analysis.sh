@@ -10,7 +10,7 @@ rtime_flags=(true)
 output_file="results.txt"
 >> "$output_file"
 
-echo "--------------------------------------------------------" >> "$output_file"
+echo "-----------------------------$(date '+%Y-%m-%d %H:%M:%S')------ ----------------" >> "$output_file"
 
 mkdir -p logs  # crea la directory per i log se non esiste
 
