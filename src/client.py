@@ -67,5 +67,5 @@ class Client:
 
 @ray.remote
 class Ray_Client(Client):
-    def __init__(self, client_id, tr_generator=None):
-        Client.__init__(self, client_id, tr_generator)
+    def __init__(self, client_id, task, tr_generator=None):
+        Client.__init__(self, client_id, task, tr_generator)

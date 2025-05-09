@@ -45,8 +45,8 @@ def federated_training(
 
     server = Server.remote(model, hp, task=task)
     n_benign = n_clients - n_byzantine
-    clients = [Client.remote(i, ds_gen, task=task) for i in range(n_benign)] + \
-                [ByzantineClient.remote(i, ds_gen, task=task) for i in range(n_benign, n_clients)]
+    clients = [Client.remote(i, task, ds_gen) for i in range(n_benign)] + \
+                [ByzantineClient.remote(i, task, ds_gen) for i in range(n_benign, n_clients)]
 
     for round_num in range(n_rounds):
         print(f"\n--- Round {round_num + 1} ---")
