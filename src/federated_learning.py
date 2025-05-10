@@ -17,7 +17,7 @@ import argparse
 from utils import set_random_state, get_generator, ds_generator, extract_percentage
 import os
 
-from global_model import MLPNet, MNIST_HP, FASHIONMNIST_HP
+from global_model import MLPNet, MNIST_HP, FASHIONMNIST_HP, KMNIST_HP
 from server import Server
 from client import Ray_Client as Client
 from byzantineClient import ByzantineClient
@@ -25,6 +25,12 @@ from byzantineClient import ByzantineClient
 # reproducibility
 set_random_state()
 GENERATOR = get_generator()
+
+HP = {
+    "mnist": MNIST_HP,
+    "fashionmnist": FASHIONMNIST_HP,
+    "kmnist": KMNIST_HP
+}
 
 # Start Ray
 os.environ["RAY_DEDUP_LOGS"]="0"
@@ -101,17 +107,16 @@ def main():
     n_byzantine = vars(parser.parse_args())['byzantine']
 
     # validate inputs
-    assert(task in ["mnist", "fashionmnist", "fashion"]), "Task must be mnist or fashionmnist"
+    assert(task in ["mnist", "fashionmnist", "kmnist"]), "Task must be mnist, kmnist or fashionmnist"
     assert(n_clients > 0), "Number of clients must be greater than 0"
     assert(n_rounds > 0), "Number of rounds must be greater than 0"
     assert( 0 < percentage <= 1), "Percentage of clients must be between 0 and 1"
     assert(n_clients >= n_byzantine), "Number of clients must be greater than number of byzantine clients"
 
     model = MLPNet()
-    hp = MNIST_HP if task == "mnist" else FASHIONMNIST_HP
     federated_training(
         model=model, 
-        hp=hp,
+        hp=HP[task],
         task=task,
         n_clients=n_clients, 
         n_rounds=n_rounds, 

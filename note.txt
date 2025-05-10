@@ -440,7 +440,6 @@ python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.7 -b 1 -rtime -
 python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.8582
 python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.8595
 
------------------------------2025-05-09 12:10:54------ ----------------
 python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 1 -b 0 -> Final global model accuracy: 0.8871
 python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.8893
 python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.8629
@@ -479,6 +478,116 @@ python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 2 -> Fina
 python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.853
 
 KMNIST: {'hidden': 512, 'lr': 0.0006838478430964042, 'batch_size': 50, 'epochs': 20, 'task': 'kmnist'} => 0.8928
+
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 1 -b 0 -rtime -> Final global model accuracy: 0.7999
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 1 -b 1 -rtime -> Final global model accuracy: 0.7999
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 1 -b 2 -rtime -> Final global model accuracy: 0.7999
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 1 -b 3 -rtime -> Final global model accuracy: 0.7999
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.7983
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.7996
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.7977
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.7977
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.7951
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.7967
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.7923
+python3 src/federated_learning.py -t kmnist -n 4 -r 1 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.7951
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8519
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.8578
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.8591
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.8519
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.8566
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.8566
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.8549
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.8477
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.8504
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.852
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.7912
+python3 src/federated_learning.py -t kmnist -n 4 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.7912
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 1 -b 0 -rtime -> Final global model accuracy: 0.7844
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 1 -b 1 -rtime -> Final global model accuracy: 0.7844
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 1 -b 2 -rtime -> Final global model accuracy: 0.7844
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 1 -b 3 -rtime -> Final global model accuracy: 0.7844
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.7848
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.7839
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.7895
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.7839
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.7804
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.7922
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.7898
+python3 src/federated_learning.py -t kmnist -n 5 -r 1 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.7852
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8419
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.8456
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.8407
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.8368
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.8369
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.8439
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.8346
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.7947
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.8382
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.8417
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.8325
+python3 src/federated_learning.py -t kmnist -n 5 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.8044
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 1 -b 0 -rtime -> Final global model accuracy: 0.7796
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 1 -b 1 -rtime -> Final global model accuracy: 0.7796
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 1 -b 2 -rtime -> Final global model accuracy: 0.7796
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 1 -b 3 -rtime -> Final global model accuracy: 0.7796
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.78
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.7812
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.78
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.7684
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.7702
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.7809
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.7804
+python3 src/federated_learning.py -t kmnist -n 6 -r 1 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.7819
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8396
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.8364
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.8361
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.8387
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.8149
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.8274
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.8225
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.836
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.8158
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.8094
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.8142
+python3 src/federated_learning.py -t kmnist -n 6 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.831
+
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 1 -b 0 -> Final global model accuracy: 0.9012
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.9026
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.9026
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.9028
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 0.8 -b 0 -> Final global model accuracy: 0.903
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.9053
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.9005
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.9038
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 0.7 -b 0 -> Final global model accuracy: 0.8965
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.9003
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.902
+python3 src/federated_learning.py -t kmnist -n 5 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.9005
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 1 -b 0 -> Final global model accuracy: 0.8968
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.8973
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.8948
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.8956
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 0.8 -b 0 -> Final global model accuracy: 0.8943
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.8905
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.8935
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.8899
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 0.7 -b 0 -> Final global model accuracy: 0.8882
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.8946
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.8905
+python3 src/federated_learning.py -t kmnist -n 7 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.8928
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 1 -b 0 -> Final global model accuracy: 0.8876
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.8896
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.8889
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.8884
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 0.8 -b 0 -> Final global model accuracy: 0.8862
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.8877
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.8839
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.883
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 0.7 -b 0 -> Final global model accuracy: 0.889
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.8872
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.8859
+python3 src/federated_learning.py -t kmnist -n 10 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.8823
 
 # Note: KMNIST e FMNIST sono più "difficili" rispetto a MNIST, per ottenere valori più alti bisognerebbe cambiare modello
 # Per l'analisi in oggetto non è importante l'accuracy assoluta, ho scelto quindi di mantenere la stessa architettura neurale,

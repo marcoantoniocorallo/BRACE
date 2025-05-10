@@ -42,3 +42,9 @@ FASHIONMNIST_HP = {
     "batch_size" : 50,
     "epochs" : 20,
 }
+
+KMNIST_HP = {
+    "lr" : 0.0006838478430964042,
+    "batch_size" : 50,
+    "epochs" : 20,
+}
