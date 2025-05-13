@@ -365,7 +365,7 @@ Le proprietà prese in considerazione sono:
 Sulla base di queste assunzioni, la configurazione presa in esame è <5 client, 5 round, tr.set fissati>.
 
 # FashionMNIST
-{'hidden': 512, 'lr': 0.000362561763457623, 'batch_size': 50, 'epochs': 20} => 0.8821
+MLP -> {'hidden': 512, 'lr': 0.000362561763457623, 'batch_size': 50, 'epochs': 20} => 0.8821
 
 python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8617
 python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 1 -b 1 -rtime -> Final global model accuracy: 0.8447
@@ -476,6 +476,121 @@ python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 0 -> Fina
 python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.8817
 python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.8743
 python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.853
+
+CNN -> {'hidden': 512, 'lr': 0.00218309683905246, 'batch_size': 50, 'epochs': 20} => 0.905
+
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 1 -b 0 -> Final global model accuracy: 0.888
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.8857
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 0.8 -b 0 -> Final global model accuracy: 0.8877
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.8826
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 0.7 -b 0 -> Final global model accuracy: 0.884
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.8838
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 1 -b 0 -> Final global model accuracy: 0.8843
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.8869
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 0.8 -b 0 -> Final global model accuracy: 0.8846
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.8812
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 0.7 -b 0 -> Final global model accuracy: 0.8839
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.8762
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 1 -b 0 -> Final global model accuracy: 0.8802
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 1 -b 1 -> Final global model accuracy: 0.8811
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.8 -b 0 -> Final global model accuracy: 0.8803
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.8 -b 1 -> Final global model accuracy: 0.8789
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 0 -> Final global model accuracy: 0.8817
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 1 -> Final global model accuracy: 0.8802
+
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.8567
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.7322
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.8846
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.7972
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.8842
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.8604
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.8796
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.8508
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.8598
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.8561
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.8795
+python3 src/federated_learning.py -t fashionmnist -n 7 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.8754
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 1 -b 2 -> Final global model accuracy: 0.8814
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 1 -b 3 -> Final global model accuracy: 0.8783
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.8 -b 2 -> Final global model accuracy: 0.8786
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.8 -b 3 -> Final global model accuracy: 0.8702
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 2 -> Final global model accuracy: 0.8757
+python3 src/federated_learning.py -t fashionmnist -n 10 -r 5 -p 0.7 -b 3 -> Final global model accuracy: 0.8481
+
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8617
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 1 -b 1 -rtime -> Final global model accuracy: 0.8312
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.8598
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.7601
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.8603
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.6827
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8658
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.8649
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.866
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.8684
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.8602
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.8598
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8603
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 1 -b 1 -rtime -> Final global model accuracy: 0.8426
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.859
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.845
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.8588
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.8586
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8644
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.8642
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.8618
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.863
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.8645
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.8631
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8538
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 1 -b 1 -rtime -> Final global model accuracy: 0.847
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.8526
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.855
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.855
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.8551
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 1 -b 0 -rtime -> Final global model accuracy: 0.8615
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 1 -b 1 -rtime -> Final global model accuracy: 0.862
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.8 -b 0 -rtime -> Final global model accuracy: 0.8621
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.8 -b 1 -rtime -> Final global model accuracy: 0.859
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.7 -b 0 -rtime -> Final global model accuracy: 0.8616
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.7 -b 1 -rtime -> Final global model accuracy: 0.8611
+
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 1 -b 2 -rtime -> Final global model accuracy: 0.6859
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 1 -b 3 -rtime -> Final global model accuracy: 0.679
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.6793
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.6809
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.6777
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 1 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.6801
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.8649
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.8609
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.8618
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.8618
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.8609
+python3 src/federated_learning.py -t fashionmnist -n 4 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.6788
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 1 -b 2 -rtime -> Final global model accuracy: 0.7226
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 1 -b 3 -rtime -> Final global model accuracy: 0.6796
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.6809
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.6799
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.7474
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 1 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.7943
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.8625
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.8632
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.8624
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.8629
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.858
+python3 src/federated_learning.py -t fashionmnist -n 5 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.8611
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 1 -b 2 -rtime -> Final global model accuracy: 0.7545
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 1 -b 3 -rtime -> Final global model accuracy: 0.675
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.8173
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.6762
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.8091
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 1 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.675
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 1 -b 2 -rtime -> Final global model accuracy: 0.8607
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 1 -b 3 -rtime -> Final global model accuracy: 0.8609
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.8 -b 2 -rtime -> Final global model accuracy: 0.8607
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.8 -b 3 -rtime -> Final global model accuracy: 0.8622
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.7 -b 2 -rtime -> Final global model accuracy: 0.8602
+python3 src/federated_learning.py -t fashionmnist -n 6 -r 2 -p 0.7 -b 3 -rtime -> Final global model accuracy: 0.8594
+
 
 KMNIST: {'hidden': 512, 'lr': 0.0006838478430964042, 'batch_size': 50, 'epochs': 20, 'task': 'kmnist'} => 0.8928
 

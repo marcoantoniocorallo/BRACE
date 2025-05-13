@@ -8,7 +8,7 @@
         - and whether to use a different training set at each round (real-time task).
 
     The simulation ran on different configurations of these parameters, 
-    using the model and hyperparameters found by the model selection in mnist_classifier.py.
+    using the hyperparameters found by the model selection in classifier.py.
 
     Results are reported in the report.
 '''
@@ -17,7 +17,7 @@ import argparse
 from utils import set_random_state, get_generator, ds_generator, extract_percentage
 import os
 
-from global_model import MLPNet, MNIST_HP, FASHIONMNIST_HP, KMNIST_HP
+from global_models import MNISTModel, MNIST_HP, FASHIONMNIST_HP, KMNIST_HP
 from server import Server
 from client import Ray_Client as Client
 from byzantineClient import ByzantineClient
@@ -113,7 +113,7 @@ def main():
     assert( 0 < percentage <= 1), "Percentage of clients must be between 0 and 1"
     assert(n_clients >= n_byzantine), "Number of clients must be greater than number of byzantine clients"
 
-    model = MLPNet()
+    model = MNISTModel()
     federated_training(
         model=model, 
         hp=HP[task],
