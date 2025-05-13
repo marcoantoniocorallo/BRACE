@@ -17,7 +17,7 @@ import argparse
 from utils import set_random_state, get_generator, ds_generator, extract_percentage
 import os
 
-from global_models import MNISTModel, MNIST_HP, FASHIONMNIST_HP, KMNIST_HP
+from global_models import MNISTModel, FashionMNISTModel, MNIST_HP, FASHIONMNIST_HP
 from server import Server
 from client import Ray_Client as Client
 from byzantineClient import ByzantineClient
@@ -28,8 +28,7 @@ GENERATOR = get_generator()
 
 HP = {
     "mnist": MNIST_HP,
-    "fashionmnist": FASHIONMNIST_HP,
-    "kmnist": KMNIST_HP
+    "fashionmnist": FASHIONMNIST_HP
 }
 
 # Start Ray
@@ -107,15 +106,14 @@ def main():
     n_byzantine = vars(parser.parse_args())['byzantine']
 
     # validate inputs
-    assert(task in ["mnist", "fashionmnist", "kmnist"]), "Task must be mnist, kmnist or fashionmnist"
+    assert(task in ["mnist", "fashionmnist"]), "Task must be mnist or fashionmnist"
     assert(n_clients > 0), "Number of clients must be greater than 0"
     assert(n_rounds > 0), "Number of rounds must be greater than 0"
     assert( 0 < percentage <= 1), "Percentage of clients must be between 0 and 1"
     assert(n_clients >= n_byzantine), "Number of clients must be greater than number of byzantine clients"
 
-    model = MNISTModel()
     federated_training(
-        model=model, 
+        model=MNISTModel() if task == "mnist" else FashionMNISTModel(), 
         hp=HP[task],
         task=task,
         n_clients=n_clients, 

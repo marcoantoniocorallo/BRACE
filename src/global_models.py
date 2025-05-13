@@ -4,6 +4,10 @@
         a 1-hidden-layer-MLP with 512 units for MNIST 
         a 2-layer CNN followed by 3 fully connected layers, 
             with batch normalization and dropout for FashionMNISt.
+
+    Models performance:
+        MNIST: 0.9779 accuracy
+        FashionMNIST: 0.9088 accuracy
 '''
 
 from utils import set_random_state, get_generator
@@ -19,24 +23,21 @@ class MNISTModel(torch.nn.Module):
     def __init__(self, input_size = 28, hidden = 512, output_size = 10, generator = GENERATOR):
         super().__init__()
 
-        # nn architecture
         self.input_size = input_size
         self.l1 = torch.nn.Linear(input_size * input_size, hidden)
         self.l2 = torch.nn.Linear(hidden, output_size)
 
-        # initialize weights
         torch.nn.init.kaiming_uniform_(self.l1.weight, generator = generator)
         torch.nn.init.kaiming_uniform_(self.l2.weight, generator = generator)
 
     def forward(self, x: torch.Tensor):
         flatten = torch.nn.Flatten()
-        x = flatten(x) # convert each 28x28 image into an array of 784 pixel values
+        x = flatten(x)
         x = torch.relu(self.l1(x))
         x = torch.softmax(self.l2(x), 1)
         return x
 
 class FashionMNISTModel(nn.Module):
-    
     def __init__(self):
         super(FashionMNISTModel, self).__init__()
         
@@ -58,7 +59,7 @@ class FashionMNISTModel(nn.Module):
         self.drop = nn.Dropout(0.25)
         self.fc2 = nn.Linear(in_features=600, out_features=120)
         self.fc3 = nn.Linear(in_features=120, out_features=10)
-        
+
     def forward(self, x):
         out = self.layer1(x)
         out = self.layer2(out)
@@ -77,13 +78,7 @@ MNIST_HP = {
 }
 
 FASHIONMNIST_HP = {
-    "lr" : 0.000362561763457623,
-    "batch_size" : 50,
-    "epochs" : 20,
-}
-
-KMNIST_HP = {
-    "lr" : 0.0006838478430964042,
-    "batch_size" : 50,
-    "epochs" : 20,
+    "lr" :  0.0006251373574521746,
+    "batch_size" : 128,
+    "epochs" : 10,
 }

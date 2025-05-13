@@ -12,7 +12,7 @@
 '''
 
 import argparse
-from utils import DATASET_PATH, MODEL_PATH, MNIST_MODEL_FILE, FASHIONMNIST_MODEL_FILE, KMNIST_MODEL_FILE, set_random_state, get_generator, data_load
+from utils import DATASET_PATH, MODEL_PATH, MNIST_MODEL_FILE, FASHIONMNIST_MODEL_FILE, set_random_state, get_generator, data_load
 import torch
 from torch.utils.data import DataLoader, random_split
 from ray import tune
@@ -25,18 +25,13 @@ GENERATOR = get_generator()
 
 MODEL_FILE = {
     "mnist": MODEL_PATH + MNIST_MODEL_FILE,
-    "fashionmnist": MODEL_PATH + FASHIONMNIST_MODEL_FILE,
-    "kmnist": MODEL_PATH + KMNIST_MODEL_FILE,
+    "fashionmnist": MODEL_PATH + FASHIONMNIST_MODEL_FILE
 }
 
 def train_model(config):
     dir_path = DATASET_PATH
-    model = None
-
-    if config["task"] == "mnist":
-        model = MNISTModel(hidden = config["hidden"]) 
-    elif config["task"] == "fashionmnist":
-        model = FashionMNISTModel()
+    
+    model = MNISTModel(hidden = config["hidden"]) if config["task"] == "mnist" else FashionMNISTModel()
     optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
     loss_fn = torch.nn.CrossEntropyLoss() # suitable for multiclass classification tasks
 
@@ -153,12 +148,8 @@ def load_model(model, model_file):
 # retrain on the entire training set!
 def retrain(config, task):
     dir_path = DATASET_PATH
-    model = None
-
-    if config["task"] == "mnist":
-        model = MNISTModel(hidden = config["hidden"]) 
-    elif config["task"] == "fashionmnist":
-        model = FashionMNISTModel()
+    
+    model = MNISTModel(hidden = config["hidden"]) if config["task"] == "mnist" else FashionMNISTModel()
     optimizer = torch.optim.Adam(model.parameters(), lr = config["lr"])
 
     loss_fn = torch.nn.CrossEntropyLoss()
@@ -215,9 +206,9 @@ def model_selection(config):
 
     result = tune.run(
         train_model,
-        resources_per_trial={"cpu": 2},
+        resources_per_trial={"cpu": 8},
         config=config,
-        num_samples= 1,
+        num_samples= 16,
         scheduler=scheduler,
         
     )
@@ -231,7 +222,7 @@ def model_selection(config):
 
 def main():
     parser = argparse.ArgumentParser(description=
-        "-t     | --task: task to run (mnist | fashionmnist | kmnist)\n"
+        "-t     | --task: task to run (mnist | fashionmnist)\n"
         "         --training (-t) for model selection\n",
     )
     parser.add_argument('-t', '--task', type=str)
@@ -239,7 +230,7 @@ def main():
     training = vars(parser.parse_args())['training']
     task = vars(parser.parse_args())['task']
 
-    assert(task in ["mnist", "fashionmnist", "kmnist"]), "Task must be mnist, kminst or fashionmnist"
+    assert(task in ["mnist", "fashionmnist"]), "Task must be mnist or fashionmnist"
 
     if training:
         config = { # MNIST
@@ -249,26 +240,16 @@ def main():
             "epochs" : tune.choice([20]),
             "task" : task,
         } if task == "mnist" else { # FASHIONMNIST
-            "lr": 0.00218309683905246, #tune.loguniform(1e-5, 1e-2),
-            "batch_size": tune.choice([50,]),
-            "epochs" : tune.choice([20]),
-            "task" : task,
-        } if task == "fashionmnist" else { # KMNIST
-            "hidden": tune.choice([512]),
-            "lr": 0.0006838478430964042, #tune.loguniform(1e-5, 1e-2),
-            "batch_size": tune.choice([50]),
-            "epochs" : tune.choice([20]),
+            "lr": 0.0006251373574521746, #tune.loguniform(1e-5, 1e-2),
+            "batch_size": tune.choice([128]),
+            "epochs" : tune.choice([10]),
             "task" : task,
         }
         best_trial = model_selection(config)
 
         retrain(best_trial.config, task) # retrain and save model params
     
-    model = None
-    if config["task"] == "mnist":
-        model = MNISTModel() 
-    elif config["task"] == "fashionmnist":
-        model = FashionMNISTModel()
+    model = MNISTModel() if config["task"] == "mnist" else FashionMNISTModel()
     model = load_model(model, MODEL_FILE[task])
         
     test_acc = test_model(model, dir_path=DATASET_PATH, task=task)
