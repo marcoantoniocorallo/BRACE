@@ -1,6 +1,5 @@
 venv
 datasets
-*.ipynb
 src/__pycache__/
 logs/
 results*

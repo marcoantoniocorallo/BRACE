@@ -364,48 +364,27 @@ Le proprietà prese in considerazione sono:
 - verosimiglianza dell'ambiente => n. round >= 5
 Sulla base di queste assunzioni, la configurazione presa in esame è <5 client, 5 round, tr.set fissati>.
 
-# FashionMNIST
-{'lr': 0.0006251373574521746, 'batch_size': 128, 'epochs': 10, 'task': 'fashionmnist'} => 0.9088
+## Result #3
+Una seconda analisi è stata effettuata su un altro dataset, FashionMNIST.
+Essendo questo dataset più complesso di MNIST, è stato utilizzato un modello più complesso rispetto all'MLP 
+usato precedentemente. Una CNN è stata allenata su hyperparameters trovati tramite model selection.
+Gli hyperparameters sono {'lr': 0.0006251373574521746, 'batch_size': 128, 'epochs': 10},
+e la performance finale del modello raggiunge un'accuracy del 0.9088.
+Le due analisi vedono quindi modelli selezionati tramite una rigorosa fase di model selection, 
+utilizzando modelli di complessità crescente in base al problema. 
 
-Training set fissati
-| N. Clients | N. Rounds | Client Selection | Byzantine Clients | Final Accuracy |
-| -----------| ----------| -----------------| ------------------| -------------- |
-| 5          | 5         | 1.0              | 0                 | 0.914          |
-| 5          | 5         | 0.8              | 0                 | 0.913          |
-| 5          | 5         | 0.7              | 0                 | 0.9132         |
-| 7          | 5         | 1.0              | 0                 | 0.9117         |
-| 7          | 5         | 0.8              | 0                 | 0.91           |
-| 7          | 5         | 0.7              | 0                 | 0.9118         |
-| 10         | 5         | 1.0              | 0                 | 0.9101         |
-| 10         | 5         | 0.8              | 0                 | 0.9067         |
-| 10         | 5         | 0.7              | 0                 | 0.9078         |
-| 5          | 5         | 1.0              | 1                 | 0.9104         |
-| 5          | 5         | 0.8              | 1                 | 0.9092         |
-| 5          | 5         | 0.7              | 1                 | 0.9084         |
-| 7          | 5         | 1.0              | 1                 | 0.9108         |
-| 7          | 5         | 0.8              | 1                 | 0.9093         |
-| 7          | 5         | 0.7              | 1                 | 0.9058         |
-| 10         | 5         | 1.0              | 1                 | 0.9115         |
-| 10         | 5         | 0.8              | 1                 | 0.9072         |
-| 10         | 5         | 0.7              | 1                 | 0.9094         |
-| 5          | 5         | 1.0              | 2                 | 0.8976         |
-| 5          | 5         | 0.8              | 2                 | 0.908          |
-| 5          | 5         | 0.7              | 2                 | 0.9096         |
-| 7          | 5         | 1.0              | 2                 | 0.9042         |
-| 7          | 5         | 0.8              | 2                 | 0.9039         |
-| 7          | 5         | 0.7              | 2                 | 0.8959         |
-| 10         | 5         | 1.0              | 2                 | 0.9062         |
-| 10         | 5         | 0.8              | 2                 | 0.9045         |
-| 10         | 5         | 0.7              | 2                 | 0.9028         |
-| 5          | 5         | 1.0              | 3                 | 0.7859         |
-| 5          | 5         | 0.8              | 3                 | 0.8727         |
-| 5          | 5         | 0.7              | 3                 | 0.9011         |
-| 7          | 5         | 1.0              | 3                 | 0.8955         |
-| 7          | 5         | 0.8              | 3                 | 0.9018         |
-| 7          | 5         | 0.7              | 3                 | 0.9049         |
-| 10         | 5         | 1.0              | 3                 | 0.9063         |
-| 10         | 5         | 0.8              | 3                 | 0.8932         |
-| 10         | 5         | 0.7              | 3                 | 0.8986         |
+# Analisi da fare:
+Performance all'aumentare del numero di nodi bizantini (real-time e non)
+
+Performance all'aumentare del numero di round (real-time)
+
+Performance diminuendo il numero di client da aggregare ad ogni round 
+
+# TODO
+Le analisi sui due sistemi sono poi state aggregate per valutare il comportamento medio dei sistemi 
+in funzione dei nodi bizantini
+
+# TODO grafici
 
 Real-Time
 | Total Clients | Rounds | Clients per Round | Byzantine Clients | Accuracy |
@@ -482,6 +461,47 @@ Real-Time
 | 6             | 2      | 100%              | 3                 | 0.8922   |
 | 6             | 2      | 80%               | 3                 | 0.8909   |
 | 6             | 2      | 70%               | 3                 | 0.8881   |
+
+Training set fissati
+| N. Clients | N. Rounds | Client Selection | Byzantine Clients | Final Accuracy |
+| -----------| ----------| -----------------| ------------------| -------------- |
+| 5          | 5         | 1.0              | 0                 | 0.914          |
+| 5          | 5         | 0.8              | 0                 | 0.913          |
+| 5          | 5         | 0.7              | 0                 | 0.9132         |
+| 7          | 5         | 1.0              | 0                 | 0.9117         |
+| 7          | 5         | 0.8              | 0                 | 0.91           |
+| 7          | 5         | 0.7              | 0                 | 0.9118         |
+| 10         | 5         | 1.0              | 0                 | 0.9101         |
+| 10         | 5         | 0.8              | 0                 | 0.9067         |
+| 10         | 5         | 0.7              | 0                 | 0.9078         |
+| 5          | 5         | 1.0              | 1                 | 0.9104         |
+| 5          | 5         | 0.8              | 1                 | 0.9092         |
+| 5          | 5         | 0.7              | 1                 | 0.9084         |
+| 7          | 5         | 1.0              | 1                 | 0.9108         |
+| 7          | 5         | 0.8              | 1                 | 0.9093         |
+| 7          | 5         | 0.7              | 1                 | 0.9058         |
+| 10         | 5         | 1.0              | 1                 | 0.9115         |
+| 10         | 5         | 0.8              | 1                 | 0.9072         |
+| 10         | 5         | 0.7              | 1                 | 0.9094         |
+| 5          | 5         | 1.0              | 2                 | 0.8976         |
+| 5          | 5         | 0.8              | 2                 | 0.908          |
+| 5          | 5         | 0.7              | 2                 | 0.9096         |
+| 7          | 5         | 1.0              | 2                 | 0.9042         |
+| 7          | 5         | 0.8              | 2                 | 0.9039         |
+| 7          | 5         | 0.7              | 2                 | 0.8959         |
+| 10         | 5         | 1.0              | 2                 | 0.9062         |
+| 10         | 5         | 0.8              | 2                 | 0.9045         |
+| 10         | 5         | 0.7              | 2                 | 0.9028         |
+| 5          | 5         | 1.0              | 3                 | 0.7859         |
+| 5          | 5         | 0.8              | 3                 | 0.8727         |
+| 5          | 5         | 0.7              | 3                 | 0.9011         |
+| 7          | 5         | 1.0              | 3                 | 0.8955         |
+| 7          | 5         | 0.8              | 3                 | 0.9018         |
+| 7          | 5         | 0.7              | 3                 | 0.9049         |
+| 10         | 5         | 1.0              | 3                 | 0.9063         |
+| 10         | 5         | 0.8              | 3                 | 0.8932         |
+| 10         | 5         | 0.7              | 3                 | 0.8986         |
+
 
 Fase 1
 X Step 1. Scegliere dataset
