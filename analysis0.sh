@@ -1,13 +1,13 @@
 #!/bin/bash
 
 task="fashionmnist"
-n_values=(4 5 6)
-r_values=(1 2)
+n_values=(5 7 10)
+r_values=(5)
 p_values=(1 0.8 0.7)
-b_values=(1)
-rtime_flags=(true)
+b_values=(0)
+rtime_flags=(false)
 
-output_file="results_rtime1.txt"
+output_file="results0.txt"
 >> "$output_file"
 
 echo "-----------------------------$(date '+%Y-%m-%d %H:%M:%S')------ ----------------" >> "$output_file"

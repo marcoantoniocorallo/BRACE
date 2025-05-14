@@ -4,7 +4,7 @@ task="fashionmnist"
 n_values=(5 7 10)
 r_values=(5)
 p_values=(1 0.8 0.7)
-b_values=(2 3)
+b_values=(1)
 rtime_flags=(false)
 
 output_file="results1.txt"

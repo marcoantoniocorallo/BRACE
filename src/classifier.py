@@ -206,11 +206,10 @@ def model_selection(config):
 
     result = tune.run(
         train_model,
-        resources_per_trial={"cpu": 8},
+        resources_per_trial={"cpu": 2},
         config=config,
-        num_samples= 16,
+        num_samples= 1,
         scheduler=scheduler,
-        
     )
 
     best_trial = result.get_best_trial("val_loss", "min", "last")

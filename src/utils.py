@@ -108,7 +108,7 @@ def average_state_dicts(dicts):
 
     for key in dicts[0].keys():
         # Stack all tensors for this key
-        stacked = torch.stack([d[key] for d in dicts])
+        stacked = torch.stack([d[key].float() for d in dicts])
         # Compute the mean along the 0th dimension
         avg_dict[key] = stacked.mean(dim=0)
 
