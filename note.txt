@@ -216,148 +216,141 @@ introducendo nuovi tipi di nodi bizantini, che implementino attacchi di diverso 
 Come ci si poteva aspettare, all'aumentare del numero di nodi bizantini l'accuracy diminuisce.
 In particolare, segue le successioni:
 
-<4 client, 1 round>
-- (100% client per round): 0.9511 -> 0.9154 -> 0.7508 -> 0.7492 //diminuisce fortemente all'introduzione del secondo nodo bizantino,
-- (80% client per round) : 0.9505 -> 0.8630 -> 0.7489 -> 0.7466 // diminuisce fortemente all'introduzione del primo e secondo nodo bizantino,
-- (70% client per round) : 0.9510 -> 0.7511 -> 0.7511 -> 0.7511 // diminuisce all'introduzione del primo nodo e resta invariato dopo.
+<Client selection 100%>:
+4 clients, 1 rounds: 0.9511 -> 0.9154 -> 0.7508 -> 0.7492
+diminuisce fortemente all'introduzione del secondo nodo bizantino
 
-<4 client, 2 round>
-- (100% client per round): 0.9539 -> 0.9533 -> 0.9524 -> 0.9523 // le prestazioni diminuiscono molto lentamente
-- (80% client per round) : 0.9515 -> 0.9528 -> 0.9514 -> 0.9521 // le prestazioni diminuiscono molto lentamente 
-- (70% client per round) : 0.9527 -> 0.9528 -> 0.9517 -> 0.9517 // le prestazioni diminuiscono molto lentamente
+4 clients, 2 rounds: 0.9539 -> 0.9533 -> 0.9524 -> 0.9523
+le prestazioni diminuiscono molto lentamente
 
-<5 client, 1 round>
-- (100% client per round): 0.9474 -> 0.9277 -> 0.7883 -> 0.7462 // diminuisce fortemente all'introduzione del secondo nodo bizantino
-- (80% client per round) : 0.9463 -> 0.9049 -> 0.7506 -> 0.7506 // diminuisce fortemente all'introduzione del secondo nodo bizantino
-- (70% client per round) : 0.9479 -> 0.9455 -> 0.8440 -> 0.8572 // diminuisce fortemente all'introduzione del secondo nodo bizantino
+5 clients, 1 rounds: 0.9474 -> 0.9277 -> 0.7883 -> 0.7462
+diminuisce fortemente all'introduzione del secondo nodo bizantino
 
-<5 client, 2 round>
-- (100% client per round): 0.9495 -> 0.9511 -> 0.9496 -> 0.9504 // le prestazioni diminuiscono molto lentamente o restano quasi invariate
-- (80% client per round) : 0.9484 -> 0.9496 -> 0.9483 -> 0.9481 // le prestazioni diminuiscono molto lentamente o restano quasi invariate
-- (70% client per round) : 0.9493 -> 0.9480 -> 0.9488 -> 0.9474 // le prestazioni diminuiscono molto lentamente o restano quasi invariate
+5 clients, 2 rounds: 0.9495 -> 0.9511 -> 0.9496 -> 0.9504
+le prestazioni diminuiscono molto lentamente o restano quasi invariate
 
-<6 client, 1 round>
-- (100% client per round): 0.9425 -> 0.9251 -> 0.8570 -> 0.7419 // diminuisce fortemente all'introduzione del secondo nodo bizantino
-- (80% client per round) : 0.9405 -> 0.8997 -> 0.8942 -> 0.7410 // diminuisce all'introduzione del primo nodo bizantino e poi, più fortemente, all'introduzione del terzo 
-- (70% client per round) : 0.9421 -> 0.9411 -> 0.9140 -> 0.7395 // diminuisce fortemente all'introduzione del terzo nodo bizantino
+6 clients, 1 rounds: 0.9425 -> 0.9251 -> 0.857 -> 0.7419
+diminuisce fortemente all'introduzione del secondo nodo bizantino
 
-<6 client, 2 round>
-- (100% client per round): 0.9452 -> 0.9446 -> 0.9439 -> 0.9433 // le prestazioni diminuiscono molto lentamente o restano quasi invariate
-- (80% client per round):  0.9439 -> 0.9428 -> 0.9437 -> 0.9420 // le prestazioni diminuiscono molto lentamente o restano quasi invariate
-- (70% client per round):  0.9427 -> 0.9428 -> 0.9434 -> 0.9432 // le prestazioni diminuiscono molto lentamente o restano quasi invariate
+6 clients, 2 rounds: 0.9452 -> 0.9446 -> 0.9439 -> 0.9433
+le prestazioni diminuiscono molto lentamente o restano quasi invariate
 
-In generale, in sistemi con un singolo round, quando tutti i client vengono scelti ad ogni round, le prestazioni scendono in media di :
-- ~0.02426666666 all'introduzione del primo nodo bizantino 
-- ~0.12403333333 all'introduzione del secondo nodo bizantino
-- ~0.05293333333 all'introduzione del terzo nodo bizantino
 
-Le prestazioni del sistema risultano molto più stabili in configurazioni che comprendono almeno due round, con un cambiamento medio di:
-- ~(-0.00013333333) all'introduzione del primo nodo bizantino 
-- ~0.00103333333    all'introduzione del secondo nodo bizantino
-- ~(-0.00003333333) all'introduzione del terzo nodo bizantino
+<Client Selection 80%>:
+4 clients, 1 rounds: 0.9505 -> 0.863 -> 0.7489 -> 0.7466
+diminuisce fortemente all'introduzione del primo e secondo nodo bizantino,
 
-Applicando una client selection dell'80% su sistemi a singolo round, si nota un effetto simile:
-- ~0.05656666667    all'introduzione del primo nodo bizantino 
-- ~0.0913           all'introduzione del secondo nodo bizantino
-- ~0.05183333333    all'introduzione del terzo nodo bizantino
+4 clients, 2 rounds: 0.9515 -> 0.9528 -> 0.9514 -> 0.9521
+le prestazioni diminuiscono molto lentamente 
 
-Infatti, le prestazioni risultano migliori aggiungendo il secondo round:
-- ~(-0.0004666666667)   all'introduzione del primo nodo bizantino 
-- ~0.0006               all'introduzione del secondo nodo bizantino
-- ~0.0004               all'introduzione del terzo nodo bizantino
+5 clients, 1 rounds: 0.9463 -> 0.9049 -> 0.7506 -> 0.7506
+le prestazioni diminuiscono molto lentamente 
 
-Stime simili si ottengono applicando una client selection del 70%, singolo round:
-- ~0.06776666667    all'introduzione del primo nodo bizantino 
-- ~0.04286666667    all'introduzione del secondo nodo bizantino
-- ~0.05376666667    all'introduzione del terzo nodo bizantino
+5 clients, 2 rounds: 0.9484 -> 0.9496 -> 0.9483 -> 0.9481
+le prestazioni diminuiscono molto lentamente 
 
-Doppio round:
-- ~0.0003666666667  all'introduzione del primo nodo bizantino 
-- ~(-0.0001)        all'introduzione del secondo nodo bizantino
-- ~0.0005333333333  all'introduzione del terzo nodo bizantino
+6 clients, 1 rounds: 0.9405 -> 0.8997 -> 0.8942 -> 0.741
+diminuisce all'introduzione del primo nodo bizantino e poi, più fortemente, all'introduzione del terzo 
 
-L'introduzione del secondo nodo bizantino sembra essere il momento più sensibile per le prestazioni del sistema.
+6 clients, 2 rounds: 0.9439 -> 0.9428 -> 0.9437 -> 0.942
+le prestazioni diminuiscono molto lentamente o restano quasi invariate
+
+<Client Selection 70%>:
+4 clients, 1 rounds: 0.951 -> 0.7511 -> 0.7511 -> 0.7511
+diminuisce all'introduzione del primo nodo e resta invariato dopo.
+
+4 clients, 2 rounds: 0.9527 -> 0.9528 -> 0.9517 -> 0.9517
+le prestazioni diminuiscono molto lentamente
+
+5 clients, 1 rounds: 0.9479 -> 0.9455 -> 0.844 -> 0.8572
+diminuisce fortemente all'introduzione del secondo nodo bizantino
+
+5 clients, 2 rounds: 0.9493 -> 0.948 -> 0.9488 -> 0.9474
+le prestazioni diminuiscono molto lentamente o restano quasi invariate
+
+6 clients, 1 rounds: 0.9421 -> 0.9411 -> 0.914 -> 0.7395
+diminuisce fortemente all'introduzione del terzo nodo bizantino
+
+6 clients, 2 rounds: 0.9427 -> 0.9428 -> 0.9434 -> 0.9432
+le prestazioni diminuiscono molto lentamente o restano quasi invariate
+
+In generale, l'introduzione del secondo nodo bizantino sembra essere il momento più sensibile per le prestazioni del sistema,
+quando cioè il numero di bizantini è tra il 33.33% e il 50% dei nodi totali.
+Le prestazioni del sistema risultano molto più stabili in configurazioni che comprendono almeno due round.
 
 La diminuizione del decadimento delle performance all'aumentare del numero di round, 
-in sistemi che ricordiamo essere real-time (dunque il training set locale cambia ad ogni round),
+in sistemi real-time (dove dunque il training set locale cambia ad ogni round),
 potrebbe essere dovuto alla suddivisione del training set in più partizioni, 
 che porta i nodi bizantini ad essere allenati su meno dati e attribuisce un peso minore ad ogni client.
 
 Al diminuire del numero di client scelti ad ogni round, si nota un decadimento minore delle performance
 in particolare all'introduzione del secondo nodo bizantino, che era stato evidenziato come il nodo che massimizzava il decadimento delle performance.
+# TODO Da verificare
 
 Le performance del sistema non sembrano risentire molto del numero di client totali del sistema, 
 restando più o meno stabili, a parità del numero di nodi bizantini, al variare del numero totale di client.
+# TODO Da verificare
 
 Riportiamo di seguito le performance che riguardano sistemi con training set fissati e un numero maggiore di round:
 
-<5, 100%>
-0.9758 -> 0.9736 -> 0.9691 -> 0.9321 -> 0.7674
-// Abbattimento lento delle performance per l'introduzione dei primi due nodi bizantini.
-// Il terzo nodo abbatte più nettamente le performance, 
-// che risulterebbero invece completamente schiacciate in presenza di 5 nodi bizantini (tutti i nodi del sistema)
+<Client selection 100%>:
+5 clients, 5 rounds: 0.9758 -> 0.9736 -> 0.9691 -> 0.9321
+Abbattimento lento delle performance per l'introduzione dei primi due nodi bizantini.
+Il terzo nodo abbatte più nettamente le performance, 
+che risulterebbero invece completamente schiacciate in presenza di 5 nodi bizantini (tutti i nodi del sistema)
 
-5, 80%
-0.9762 -> 0.9738 -> 0.9729 -> 0.9579 -> 0.7676
-// Abbattimento lento delle performance per l'introduzione dei primi due nodi bizantini.
-// Il terzo nodo abbatte più nettamente le performance, 
-// che risulterebbero invece completamente schiacciate in presenza di 5 nodi bizantini (tutti i nodi del sistema)
+7 clients, 5 rounds: 0.9733 -> 0.9718 -> 0.9678 -> 0.9589
+Decadimento lento e costante delle performance
+Ancora una volta, l'abbattimento è preponderante quando si hanno 5 bizantini su 7 (più del 50%).
 
-5, 70%
-0.9788 -> 0.9759 -> 0.9750 -> 0.9658 -> 0.7684
-// Decadimento lento delle prestazioni, a meno del caso di 5/10 bizantini
-// La client selection del 70% mitiga l'abbattimento delle performance all'introduzione del terzo nodo bizantino,
-// portando ad un abbattimento di 0.0092, contro il 0.037 e il 0.015 dei due casi sopra.
+10 clients, 5 rounds: 0.9677 -> 0.9676 -> 0.9656 -> 0.9625
+Decadimento delle performance quasi nullo per i primi 3 nodi bizantini 
 
-7, 100%
-0.9733 -> 0.9718 -> 0.9678 -> 0.9589 -> 0.7964
-// Decadimento lento e costante delle performance
-// Ancora una volta, l'abbattimento è preponderante quando si hanno 5 bizantini su 7 (più del 50%).
+<Client Selection 80%>:
+5 clients, 5 rounds: 0.9762 -> 0.9738 -> 0.9729 -> 0.9579
+Abbattimento lento delle performance per l'introduzione dei primi due nodi bizantini.
+Il terzo nodo abbatte più nettamente le performance, 
+che risulterebbero invece completamente schiacciate in presenza di 5 nodi bizantini (tutti i nodi del sistema)
 
-7, 80%
-0.9737 -> 0.9689 -> 0.9620 -> 0.9608 -> 0.7937
-// Decadimento lento, leggermente meno lento rispetto al client selection del 100%
+7 clients, 5 rounds: 0.9737 -> 0.9689 -> 0.962 -> 0.9608
+Decadimento lento, leggermente meno lento rispetto al client selection del 100%
 
-7, 70%
-0.9727 -> 0.9688 -> 0.9700 -> 0.9701 -> 0.9081
-// Decadimento molto lento, che tende ad oscillare dopo l'introduzione del primo nodo bizantino.
-// In questo caso, l'introduzione del quarto e quinto nodo bizantino porta a 
-// un decadimento delle performance significativo, ma non rilevante quanto nei casi precedenti.
-// Questa differenza potrebbe essere data da una selezione fortunata dei nodi ad ogni round.
+10 clients, 5 rounds: 0.9682 -> 0.9657 -> 0.9638 -> 0.961
+Decadimento delle performance quasi nullo per i primi 3 nodi bizantini 
 
-10, 100%
-0.9677 -> 0.9676 -> 0.9656 -> 0.9625 -> 0.9439
-// Decadimento delle performance quasi nullo per i primi 3 nodi bizantini 
+<Client Selection 70%>:
 
-10, 80%
-0.9682 -> 0.9657 -> 0.9638 -> 0.9610 -> 0.9441
-// Decadimento delle performance quasi nullo per i primi 3 nodi bizantini 
+5 clients, 5 rounds: 0.9788 -> 0.9759 -> 0.975 -> 0.9658
+Decadimento lento delle prestazioni, a meno del caso di 5/10 bizantini
+La client selection del 70% mitiga l'abbattimento delle performance all'introduzione del terzo nodo bizantino,
+portando ad un abbattimento di 0.0092, contro il 0.037 e il 0.015 dei due casi sopra.
 
-10, 70%
-0.9681 -> 0.9662 -> 0.9615 -> 0.9519 -> 0.9315
-// Decadimento delle performance quasi nullo per i primi 2 nodi bizantini, che peggiora con l'introduzione del terzo nodo.
+7 clients, 5 rounds: 0.9727 -> 0.9688 -> 0.97 -> 0.9701
+Decadimento molto lento, che tende ad oscillare dopo l'introduzione del primo nodo bizantino.
+In questo caso, l'introduzione del quarto e quinto nodo bizantino porta a 
+un decadimento delle performance significativo, ma non rilevante quanto nei casi precedenti.
+Questa differenza potrebbe essere data da una selezione fortunata dei nodi ad ogni round.
+
+10 clients, 5 rounds: 0.9681 -> 0.9662 -> 0.9615 -> 0.9519
+Decadimento delle performance quasi nullo per i primi 2 nodi bizantini, che peggiora con l'introduzione del terzo nodo.
 
 Questi dati confermano la maggior robustezza del sistema al crescere del numero di round,
 che non solo quindi favoriscono prestazioni migliori del sistema, ma impedisce ai nodi bizantini di abbatterne l'accuracy.
 
 Notiamo anche che, sebbene le prestazioni del sistema siano leggermente più basse
 (decadimento dovuto sicuramente alla dimensione più bassa dei training set locali),
-il sistema si comporta generalmente meglio al crescere di nodi bizantini quando vi sono più client totali.
-Questo è particolarmente significativo all'introduzione di un numero alto (5/7 vs 5/10) di nodi bizantini,
-in cui le performance passano da ~77% con 5-7 nodi totali a ~94% con 10 nodi totali.
+il sistema si comporta generalmente meglio quando il numero di nodi totali è più alto,
+diminuendo di fatto la proporzione tra nodi benigni e bizantini.
+
+Questo è confermato da ulteriori analisi fatte aumentando il numero di nodi bizantini a 5:
+portando la proporzione di bizantini per nodi totali tra il 50% e il 71,43%,
+il sistema continua a performare bene con un numero maggiore di nodi totali. 
+Le performance passano in questi casi da ~77% con 5-7 nodi totali a ~94% con 10 nodi totali.
+Questo suggerisce che sistemi con più nodi siano in generale più robusti 
 
 Notiamo infine che anche in questo tipo di configurazione, 
 la diminuizione del numero di client scelti ad ogni round mitiga generalmente 
-l'abbattimento delle performance.
-
-L'analisi di questi dati porta a selezionare una configurazione quanto più ideale 
-per definire e testare un protocollo di consensus robusto ai nodi bizantini.
-Le proprietà prese in considerazione sono:
-- scalabilità   => n. nodi >= 5
-- performance   => accuracy > 96%
-- sensibilità ai nodi bizantini => abbattimento >= 0.002
-- verosimiglianza dell'ambiente => n. round >= 5
-Sulla base di queste assunzioni, la configurazione presa in esame è <5 client, 5 round, tr.set fissati>.
+l'abbattimento delle performance. # TODO da controllare
 
 ## Result #3
 Una seconda analisi è stata effettuata su un altro dataset, FashionMNIST.
@@ -367,19 +360,6 @@ Gli hyperparameters sono {'lr': 0.0006251373574521746, 'batch_size': 128, 'epoch
 e la performance finale del modello raggiunge un'accuracy del 0.9088.
 Le due analisi vedono quindi modelli selezionati tramite una rigorosa fase di model selection, 
 utilizzando modelli di complessità crescente in base al problema. 
-
-# Analisi da fare:
-Performance all'aumentare del numero di nodi bizantini (real-time e non)
-
-Performance all'aumentare del numero di round (real-time)
-
-Performance diminuendo il numero di client da aggregare ad ogni round 
-
-# TODO
-Le analisi sui due sistemi sono poi state aggregate per valutare il comportamento medio dei sistemi 
-in funzione dei nodi bizantini
-
-# TODO grafici
 
 Real-Time
 | Total Clients | Rounds | Clients per Round  | Accuracy | Byzantine Clients
@@ -495,6 +475,148 @@ Training set fissati
         10         5            100%                0.9063              3
         10         5            80%                 0.8932              3
         10         5            70%                 0.8986              3
+
+<Client selection 100%>:
+4 clients, 1 rounds: 0.9027 -> 0.8982 -> 0.7323 -> 0.711
+L'abbattimento maggiore delle performance si ha introducento il secondo nodo bizantino
+
+4 clients, 2 rounds: 0.9012 -> 0.9023 -> 0.9028 -> 0.9027
+Abbattimento praticamente nullo
+
+5 clients, 1 rounds: 0.9005 -> 0.8987 -> 0.8057 -> 0.7099
+Abbattimento delle performance minore rispetto al caso precedente ma comunque significativo: 
+9% all'introduzione del secondo nodo bizantino, 10% al terzo.
+
+5 clients, 2 rounds: 0.8978 -> 0.901 -> 0.899 -> 0.8981
+Abbattimento praticamente nullo 
+
+6 clients, 1 rounds: 0.8976 -> 0.8949 -> 0.8666 -> 0.7117
+Sistema più robusto: solo al terzo nodo bizantino si ha un abbattimento significativo delle performance.
+
+6 clients, 2 rounds: 0.894 -> 0.8958 -> 0.8923 -> 0.8922
+Abbattimento praticamente nullo
+
+<Client Selection 80%>:
+4 clients, 1 rounds: 0.9006 -> 0.86 -> 0.7121 -> 0.7096
+L'abbattimento maggiore delle performance si ha introducento il secondo nodo bizantino
+
+4 clients, 2 rounds: 0.8997 -> 0.8966 -> 0.8963 -> 0.8974
+Abbattimento praticamente nullo
+
+5 clients, 1 rounds: 0.8987 -> 0.8844 -> 0.7584 -> 0.7113
+L'abbattimento maggiore delle performance si ha introducento il secondo nodo bizantino
+
+5 clients, 2 rounds: 0.8974 -> 0.8982 -> 0.9002 -> 0.8996
+Abbattimento praticamente nullo
+
+6 clients, 1 rounds: 0.8968 -> 0.8793 -> 0.879 -> 0.7222
+Sistema più robusto: solo al terzo nodo bizantino si ha un abbattimento significativo delle performance.
+
+6 clients, 2 rounds: 0.8922 -> 0.8932 -> 0.8953 -> 0.8909
+Abbattimento praticamente nullo
+
+<Client Selection 70%>:
+4 clients, 1 rounds: 0.8908 -> 0.7664 -> 0.7071 -> 0.709
+L'abbattimento maggiore delle performance si ha introducento il secondo nodo bizantino
+
+4 clients, 2 rounds: 0.896 -> 0.8975 -> 0.8982 -> 0.8948
+Abbattimento praticamente nullo
+
+5 clients, 1 rounds: 0.8968 -> 0.8978 -> 0.8621 -> 0.8298
+L'abbattimento maggiore delle performance si ha introducento il secondo nodo bizantino
+
+5 clients, 2 rounds: 0.8938 -> 0.8972 -> 0.8962 -> 0.8957
+Abbattimento praticamente nullo
+
+6 clients, 1 rounds: 0.8953 -> 0.879 -> 0.8913 -> 0.7069
+Sistema più robusto. 
+Solo al terzo nodo bizantino si ha un abbattimento significativo delle performance.
+
+6 clients, 2 rounds: 0.8938 -> 0.8981 -> 0.894 -> 0.8881
+Abbattimento praticamente nullo
+
+In questo nuovo scenario, sembra che l'impatto dovuto all'introduzione del secondo nodo bizantino sia rilevante solo su sistemi
+con 4 e 5 client, mentre non è significativo (anzi, le performance sembrano aumentare leggermente) in presenza di 6 clients,
+dove cioè la proporzione di bizantini scende dal 40 al 33.33%, in nessuna delle tre configurazioni 
+(che differiscono in quanto alla percentuale della client selection).
+
+Di nuovo, le prestazioni del sistema risultano molto più stabili in configurazioni che comprendono almeno due round,
+con un decadimento quasi nullo in tutte le configurazioni.
+
+Al diminuire del numero di client scelti ad ogni round, si nota un decadimento minore delle performance
+in particolare all'introduzione del secondo nodo bizantino, che era stato evidenziato come il nodo che massimizzava il decadimento delle performance.
+# TODO Da verificare
+
+Le performance del sistema non sembrano risentire molto del numero di client totali del sistema, 
+restando più o meno stabili, a parità del numero di nodi bizantini, al variare del numero totale di client.
+# TODO Da verificare
+
+Riportiamo di seguito le performance che riguardano sistemi con training set fissati e un numero maggiore di round:
+
+<Client selection 100%>:
+5 clients, 5 rounds: 0.914 -> 0.9104 -> 0.8976 -> 0.7859
+Abbattimento nullo con 1 bizantino, basso al secondo, alto al terzo.
+
+7 clients, 5 rounds: 0.9117 -> 0.9108 -> 0.9042 -> 0.8955
+Abbattimento nullo con 1 bizantino, basso al secondo e al terzo.
+
+10 clients, 5 rounds: 0.9101 -> 0.9115 -> 0.9062 -> 0.9063
+Abbattimento nullo con 1 bizantino, basso al secondo e di nuovo nullo al terzo.
+
+<Client Selection 80%>:
+5 clients, 5 rounds: 0.913 -> 0.9092 -> 0.908 -> 0.8727
+Abbattimento delle prestazioni basso ad ogni nodo introdotto.
+
+7 clients, 5 rounds: 0.91 -> 0.9093 -> 0.9039 -> 0.9018
+Abbattimento delle prestazioni quasi nullo
+
+10 clients, 5 rounds: 0.9067 -> 0.9072 -> 0.9045 -> 0.8932
+Abbattimneto delle prestazioni quasi nullo. ~1% con 3 nodi bizantini
+
+<Client Selection 70%>:
+5 clients, 5 rounds: 0.9132 -> 0.9084 -> 0.9096 -> 0.9011
+Abbattimento quasi nullo
+
+7 clients, 5 rounds: 0.9118 -> 0.9058 -> 0.8959 -> 0.9049
+Abbattimento quasi nullo
+
+10 clients, 5 rounds: 0.9078 -> 0.9094 -> 0.9028 -> 0.8986
+Abbattimento quasi nullo
+
+Questi dati confermano la maggior robustezza del sistema al crescere del numero di round,
+che non solo quindi favoriscono prestazioni migliori del sistema, ma impedisce ai nodi bizantini di abbatterne l'accuracy.
+
+Notiamo anche che, sebbene le prestazioni del sistema siano leggermente più basse
+(decadimento dovuto sicuramente alla dimensione più bassa dei training set locali),
+il sistema si comporta generalmente meglio quando il numero di nodi totali è più alto,
+diminuendo di fatto la proporzione tra nodi benigni e bizantini.
+
+Notiamo infine che anche in questo tipo di configurazione, 
+la diminuizione del numero di client scelti ad ogni round mitiga generalmente 
+l'abbattimento delle performance. # TODO da controllare
+
+# TODO
+Le analisi sui due sistemi sono poi state aggregate per valutare il comportamento medio dei sistemi 
+in funzione dei nodi bizantini
+
+I risultati di queste analisi e dei confronti tra le prestazioni dei sistemi al variare delle configurazioni,
+permettono di valutare la robustezza di sistemi di Federated Learning, al fine di identificare l'architettura
+più byzantine-resilient. I dati suggeriscono un'architettura che comprenda:
+- Un alto numero di nodi >= 6;
+- Un numero di round >= 2;
+- la complessita del modello/ds influenza la performance? # TODO
+- quale client selection è la migliore? # TODO 
+
+L'analisi di questi dati porta a selezionare una configurazione quanto più ideale 
+per definire e testare un protocollo di consensus robusto ai nodi bizantini.
+Le proprietà prese in considerazione sono:
+- scalabilità   => n. nodi >= 5
+- performance   => accuracy > 96%
+- sensibilità ai nodi bizantini => abbattimento >= 0.002
+- verosimiglianza dell'ambiente => n. round >= 5
+Sulla base di queste assunzioni, la configurazione presa in esame è <5 client, 5 round, tr.set fissati>.
+
+
 Fase 1
 X Step 1. Scegliere dataset
 X Step 2. Replicare architettura e risultati attesi 
