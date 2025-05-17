@@ -1,3 +1,15 @@
+Fase 1
+X Step 1. Scegliere dataset
+X Step 2. Replicare architettura e risultati attesi 
+
+Fase 2
+X Step 1. Implementare lo stesso modello su un sistema distribuito (FL) in Ray e vedere i risultati
+X Step 2. Introdurre nodi bizantini (modificando i dataset di quei nodi) e verificare le conseguenze nelle varie configurazioni del sistema.
+          Sulla base di questi comportamenti determinare il/i settings migliori ai quali applicare il consensus
+- Step 3. Introdurre protocollo di consensus
+- Step 4. Effettuare test con metriche e scelte diverse
+- Step 5. Introdurre BRA e altre tecniche di mitigazione per verificare la composizione di più meccanismi
+
 # Idea:
 L'idea del progetto è di implementare un semplice sistema di federated learning, composto da:
 - un aggregator server;
@@ -283,13 +295,15 @@ in sistemi real-time (dove dunque il training set locale cambia ad ogni round),
 potrebbe essere dovuto alla suddivisione del training set in più partizioni, 
 che porta i nodi bizantini ad essere allenati su meno dati e attribuisce un peso minore ad ogni client.
 
-Al diminuire del numero di client scelti ad ogni round, si nota un decadimento minore delle performance
-in particolare all'introduzione del secondo nodo bizantino, che era stato evidenziato come il nodo che massimizzava il decadimento delle performance.
-# TODO Da verificare
+Analizzando i grafici e mettendo in correlazione le curve di sistemi a singolo round 
+con quelle di sistemi a doppio round, appare evidente che, 
+mentre nel primo caso le prestazioni sono molto simili e calano velocemente, 
+nel secondo caso le prestazioni sono leggermente differenti in sistemi in stato normale (0 bizantini),
+e decrescono con una tendenza più smussata. Questo conferma la robustezza introdotta dal secondo round.
 
-Le performance del sistema non sembrano risentire molto del numero di client totali del sistema, 
-restando più o meno stabili, a parità del numero di nodi bizantini, al variare del numero totale di client.
-# TODO Da verificare
+Per quanto riguarda la client selection in queste configurazioni, sembra che le variazioni delle prestazioni 
+varino da scenario a scenario. In particolare, una model selection del 70% sembra funzionare meglio 
+in sistemi a singolo round e con 5-6 client, mentre non sembra aiutare in sistemi a doppio round.
 
 Riportiamo di seguito le performance che riguardano sistemi con training set fissati e un numero maggiore di round:
 
@@ -348,9 +362,8 @@ il sistema continua a performare bene con un numero maggiore di nodi totali.
 Le performance passano in questi casi da ~77% con 5-7 nodi totali a ~94% con 10 nodi totali.
 Questo suggerisce che sistemi con più nodi siano in generale più robusti 
 
-Notiamo infine che anche in questo tipo di configurazione, 
-la diminuizione del numero di client scelti ad ogni round mitiga generalmente 
-l'abbattimento delle performance. # TODO da controllare
+Notiamo infine che in questo tipo di configurazione, la client selection più stretta (70%) 
+migliora le prestazioni in sistemi con 5-7 clients, mentre le peggiora in presenza di 10 client.
 
 ## Result #3
 Una seconda analisi è stata effettuata su un altro dataset, FashionMNIST.
@@ -543,13 +556,8 @@ dove cioè la proporzione di bizantini scende dal 40 al 33.33%, in nessuna delle
 Di nuovo, le prestazioni del sistema risultano molto più stabili in configurazioni che comprendono almeno due round,
 con un decadimento quasi nullo in tutte le configurazioni.
 
-Al diminuire del numero di client scelti ad ogni round, si nota un decadimento minore delle performance
-in particolare all'introduzione del secondo nodo bizantino, che era stato evidenziato come il nodo che massimizzava il decadimento delle performance.
-# TODO Da verificare
-
-Le performance del sistema non sembrano risentire molto del numero di client totali del sistema, 
-restando più o meno stabili, a parità del numero di nodi bizantini, al variare del numero totale di client.
-# TODO Da verificare
+Come per MNIST, notiamo che le prestazioni dei sistemi si distaccano con più round, 
+mentre seguono circa la stessa tendenza in configurazioni a singolo round.
 
 Riportiamo di seguito le performance che riguardano sistemi con training set fissati e un numero maggiore di round:
 
@@ -591,40 +599,32 @@ Notiamo anche che, sebbene le prestazioni del sistema siano leggermente più bas
 il sistema si comporta generalmente meglio quando il numero di nodi totali è più alto,
 diminuendo di fatto la proporzione tra nodi benigni e bizantini.
 
-Notiamo infine che anche in questo tipo di configurazione, 
-la diminuizione del numero di client scelti ad ogni round mitiga generalmente 
-l'abbattimento delle performance. # TODO da controllare
+In questo caso, notiamo che la diminuizione del numero di client scelti ad ogni round non porta 
+ad una mitigazione dell'impatto dei nodi bizantini, ma ad un'amplificazione della stessa.
+Questo può in generale essere dovuto dal coinvolgimento di una componente pseudo-randomica all'interno
+della client selection, che potrebbe selezionare di volta in volta i nodi sbagliati (bizantini).
 
-# TODO
-Le analisi sui due sistemi sono poi state aggregate per valutare il comportamento medio dei sistemi 
-in funzione dei nodi bizantini
+Le analisi sui due sistemi sono poi state aggregate per visualizzare in modo più immediato
+il comportamento dei sistemi in funzione dei nodi bizantini.
+Questi grafici confermano le considerazioni individuali fatte sui due modelli, 
+evidenziando tra le altre cose la criticità della client selection per le performance del sistema.
+
+L'aggregazione dei dati sui due task ci permette di validare la somiglianza di risultati sui due dataset,
+portandoci a concludere che le osservazioni e le considerazioni fatte sui due esperimenti abbiano dei 
+fondamenti sistematici che vale la pena indagare e approfondire, facendo nuovi esperimenti su questi e altri 
+dataset, con più nodi, più round e diversi tipi di client selection, 
+per progettare un sistema di federated learning performante e robusto.
 
 I risultati di queste analisi e dei confronti tra le prestazioni dei sistemi al variare delle configurazioni,
 permettono di valutare la robustezza di sistemi di Federated Learning, al fine di identificare l'architettura
 più byzantine-resilient. I dati suggeriscono un'architettura che comprenda:
 - Un alto numero di nodi >= 6;
 - Un numero di round >= 2;
-- la complessita del modello/ds influenza la performance? # TODO
-- quale client selection è la migliore? # TODO 
+- Un processo di client selection più complesso, selezionato e definito in base agli altri parametri
+  del modello. La percentuale potrebbe essere considerata un iperparametro del modello distribuito.
+  In generale, una percentuale di client selection bassa può essere rischiosa in presenza di nodi bizantini.
 
-L'analisi di questi dati porta a selezionare una configurazione quanto più ideale 
-per definire e testare un protocollo di consensus robusto ai nodi bizantini.
-Le proprietà prese in considerazione sono:
-- scalabilità   => n. nodi >= 5
-- performance   => accuracy > 96%
-- sensibilità ai nodi bizantini => abbattimento >= 0.002
-- verosimiglianza dell'ambiente => n. round >= 5
-Sulla base di queste assunzioni, la configurazione presa in esame è <5 client, 5 round, tr.set fissati>.
-
-
-Fase 1
-X Step 1. Scegliere dataset
-X Step 2. Replicare architettura e risultati attesi 
-
-Fase 2
-X Step 1. Implementare lo stesso modello su un sistema distribuito (FL) in Ray e vedere i risultati
-X Step 2. Introdurre nodi bizantini (modificando i dataset di quei nodi) e verificare le conseguenze nelle varie configurazioni del sistema.
-          Sulla base di questi comportamenti determinare il/i settings migliori ai quali applicare il consensus
-- Step 3. Introdurre protocollo di consensus
-- Step 4. Effettuare test con metriche e scelte diverse
-- Step 5. Introdurre BRA e altre tecniche di mitigazione per verificare la composizione di più meccanismi
+Visti i risultati delle analisi, si potrebbe, anche in istanze real-time, 
+iterare per più rounds sugli stessi training set prima di cambiarli.
+Questo porterebbe probabilmente un aumento generale delle prestazioni e una maggiore resistenza ai bizantini.
+Questi dati forniscono di fatto le considerazioni iniziali sulle quali basare una prima versione del nostro protocollo di consensus.
