@@ -7,7 +7,7 @@ p_values=(1 0.8 0.7)
 b_values=(0 1 2 3)
 rtime_flags=(false)
 
-output_file="results0.txt"
+output_file="results.txt"
 >> "$output_file"
 
 echo "-----------------------------$(date '+%Y-%m-%d %H:%M:%S')------ ----------------" >> "$output_file"
