@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="BRACE logo"/>
+</p>
+
 # BRACE: Byzantine-Resilient Aggregation via Consensus Enforcement
 
 **BRACE** is a research-oriented simulation framework for exploring **Byzantine-resilient Federated Learning (FL)** systems through consensus-based strategies. The project implements and analyzes different configurations of FL systems to evaluate their robustness under adversarial conditions, such as data poisoning and malicious client behavior.
